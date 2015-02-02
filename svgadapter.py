@@ -61,5 +61,26 @@ class SvgAdapter(AdapterInterface):
 		data = templ % (int(x1) + self.dw, int(y1) + self.dh, int(x2) + self.dw, int(y2) + self.dh)
 		self.write(data)
 
+	def polyline(self, points):
+		self.group()
+		polyline = []
+		for p in points:
+			x = '%s' % (int(p[0]) + self.dw)
+			y = '%s' % (int(p[1]) + self.dh)
+			polyline.append(','.join([x, y]))
+		text = ' '.join(polyline)
+		templ = '<polyline points="%s" stroke-width="2" />'
+		data = templ % text
+		self.write(data)
+
 	def polygon(self, points):
 		self.group()
+		polygon = []
+		for p in points:
+			x = '%s' % (int(p[0]) + self.dw)
+			y = '%s' % (int(p[1]) + self.dh)
+			polygon.append(','.join([x, y]))
+		text = ' '.join(polygon)
+		templ = '<polygon points="%s" stroke-width="2" />'
+		data = templ % text
+		self.write(data)

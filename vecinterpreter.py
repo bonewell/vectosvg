@@ -26,6 +26,8 @@ class VecInterpreter(InterpreterInterface):
 			return BrushColorCommand(params)
 		elif name == 'Line':
 			return LineCommand(params)
+		elif name == 'Polygon':
+			return PolygonCommand(params)
 		else:
 			return None
 
