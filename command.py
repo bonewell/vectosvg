@@ -17,10 +17,19 @@ class SizeCommand(Command):
 		(h, w) = self.params[0].split('x')
 		self.adapter.size(h, w)
 
+class PenColorCommand(Command):
+	def execute(self):
+		self.adapter.pencolor(self.params[0])
+
+class BrushColorCommand(Command):
+	def execute(self):
+		self.adapter.brushcolor(self.params[0])
+
 class LineCommand(Command):
 	def execute(self):
-		point1 = self.params[0].split(',')
-		(x1, y1) = point1[0:2]
-		point2 = self.params[1].split(',')
-		(x2, y2) = point2[0:2]
-		self.adapter.line(x1, y1, x2, y2)
+		[x1, y1] = self.params[0].strip(',').split(',')
+		for p in self.params[1:]:
+			if p.find(',') != -1: # end value can be no point
+				[x2, y2] = p.strip(',').split(',')
+				self.adapter.line(x1, y1, x2, y2)
+				[x1, y1] = [x2, y2]
