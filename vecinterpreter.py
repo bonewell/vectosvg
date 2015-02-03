@@ -30,6 +30,8 @@ class VecInterpreter(InterpreterInterface):
 			return PolygonCommand(params)
 		elif name == 'Ellipse':
 			return EllipseCommand(params)
+		elif name == 'Spline':
+			return SplineCommand(params)
 		else:
 			return None
 
