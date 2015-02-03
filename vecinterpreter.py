@@ -32,6 +32,8 @@ class VecInterpreter(InterpreterInterface):
 			return EllipseCommand(params)
 		elif name == 'Spline':
 			return SplineCommand(params)
+		elif name == 'Arrow':
+			return ArrowCommand(params)
 		else:
 			return None
 

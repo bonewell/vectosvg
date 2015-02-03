@@ -55,3 +55,9 @@ class SplineCommand(Command):
 			(x, y) = p.strip(',').split(',')
 			points.append((x, y))
 		self.adapter.spline(points)
+
+class ArrowCommand(Command):
+	def execute(self):
+		(x1, y1) = self.params[0].strip(',').split(',')
+		(x2, y2) = self.params[1].strip(',').split(',')
+		self.adapter.arrow(x1, y1, x2, y2)

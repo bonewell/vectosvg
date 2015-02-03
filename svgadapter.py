@@ -9,6 +9,7 @@ class SvgAdapter(AdapterInterface):
 		self.fill = 'FFFFFF'
 		self.newgroup = True
 		self.head()
+		self.defs()
 		self.startgroup()
 
 	def __del__(self):
@@ -21,6 +22,18 @@ class SvgAdapter(AdapterInterface):
 
 	def head(self):
 		data = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">'
+		self.write(data)
+
+	def defs(self):
+		data = """<defs>
+    <marker id="arrow"
+      viewBox="0 0 10 10" refX="0" refY="5"
+      markerUnits="strokeWidth"
+      markerWidth="4" markerHeight="3"
+      orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+  </defs>"""
 		self.write(data)
 
 	def tail(self):
@@ -107,4 +120,10 @@ class SvgAdapter(AdapterInterface):
 		templ = '<polyline points="%s" stroke-width="2" /> <!-- spline -->'
 		data = templ % text
 		data = templ % text
+		self.write(data)
+
+	def arrow(self, x1, y1, x2, y2):
+		self.group()
+		templ = '<line x1="%s" y1="%s" x2="%s" y2="%s" marker-end="url(#arrow)" stroke-width="1" />'
+		data = templ % (int(x1) + self.dw, int(y1) + self.dh, int(x2) + self.dw, int(y2) + self.dh)
 		self.write(data)
