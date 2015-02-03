@@ -28,6 +28,8 @@ class VecInterpreter(InterpreterInterface):
 			return LineCommand(params)
 		elif name == 'Polygon':
 			return PolygonCommand(params)
+		elif name == 'Ellipse':
+			return EllipseCommand(params)
 		else:
 			return None
 

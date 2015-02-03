@@ -84,3 +84,11 @@ class SvgAdapter(AdapterInterface):
 		templ = '<polygon points="%s" stroke-width="2" />'
 		data = templ % text
 		self.write(data)
+
+	def ellipse(self, cx, cy, rx, ry):
+		self.group()
+		templ = '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" />'
+		cx = 0
+		cy = 0
+		data = templ % (cx, cy, rx, ry)
+		self.write(data)
