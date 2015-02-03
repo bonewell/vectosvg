@@ -46,8 +46,8 @@ class EllipseCommand(Command):
 	def execute(self):
 		(x1, y1) = self.params[0].strip(',').split(',')
 		(x2, y2) = self.params[1].strip(',').split(',')
-		cx = 0
-		cy = 0
-		rx = 0
-		ry = 0
+		rx = (int(x2) - int(x1)) / 2
+		ry = (int(y2) - int(y1)) / 2
+		cx = int(x1) + rx
+		cy = int(y1) + ry
 		self.adapter.ellipse(cx, cy, rx, ry)
