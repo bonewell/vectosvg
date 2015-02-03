@@ -20,6 +20,8 @@ class VecInterpreter(InterpreterInterface):
 	def command(self, name, params):
 		if name == 'Size':
 			return SizeCommand(params)
+		elif name == 'Angle':
+			return AngleCommand(params)
 		elif name == 'PenColor':
 			return PenColorCommand(params)
 		elif name == 'BrushColor':

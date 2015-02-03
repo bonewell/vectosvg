@@ -6,13 +6,12 @@ class SvgAdapter(AdapterInterface):
 	def __init__(self, filename):
 		self.f = open(filename, 'w')
 		self.stroke = '000000'
-		self.fill = 'FFFFFF'
-		self.newgroup = True
+		self.fill = 'none'
 		self.head()
 		self.defs()
-		self.startgroup()
 
 	def __del__(self):
+		self.endgroup()
 		self.endgroup()
 		self.tail()
 		self.f.close()
@@ -41,7 +40,7 @@ class SvgAdapter(AdapterInterface):
 		self.write(data)
 
 	def startgroup(self):
-		data = '<g stroke="#%s" fill="#%s" >' % (self.stroke, self.fill)
+		data = '<g stroke="#%s" fill="%s" >' % (self.stroke, self.fill)
 		self.write(data)
 
 	def endgroup(self):
@@ -54,9 +53,19 @@ class SvgAdapter(AdapterInterface):
 			self.startgroup()
 			self.newgroup = False
 
-	def size(self, h, w):
-		self.dh = int(h)/2
-		self.dw = int(w)/2
+	def size(self, w, h):
+		self.cx = int(w)/2
+		self.cy = int(h)/2
+
+	def rotate(self, a):
+		self.a = int(a) * -1
+		self.root()
+		self.startgroup()
+
+	def root(self):
+		templ = '<g transform="rotate(%s %s %s)" >'
+		data = templ % (self.a, self.cx, self.cy)
+		self.write(data)
 
 	def pencolor(self, color):
 		self.stroke = color
@@ -64,25 +73,24 @@ class SvgAdapter(AdapterInterface):
 
 	def brushcolor(self, color):
 		if color == '-1':
-			color = 'FFFFFF'
-		self.fill = color
+			self.fill = 'none'
+		else:
+			self.fill = '#%s' % color
 		self.newgroup = True
 
 	def line(self, x1, y1, x2, y2):
 		self.group()
-		templ = '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke-width="2" />'
-		data = templ % (int(x1) + self.dw, int(y1) + self.dh, int(x2) + self.dw, int(y2) + self.dh)
+		templ = '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke-width="1" />'
+		data = templ % (x1, y1, x2, y2)
 		self.write(data)
 
 	def polyline(self, points):
 		self.group()
 		polyline = []
 		for p in points:
-			x = '%s' % (int(p[0]) + self.dw)
-			y = '%s' % (int(p[1]) + self.dh)
-			polyline.append(','.join([x, y]))
+			polyline.append('%s,%s' % p[:2])
 		text = ' '.join(polyline)
-		templ = '<polyline points="%s" stroke-width="2" />'
+		templ = '<polyline points="%s" stroke-width="1" />'
 		data = templ % text
 		self.write(data)
 
@@ -90,11 +98,9 @@ class SvgAdapter(AdapterInterface):
 		self.group()
 		polygon = []
 		for p in points:
-			x = '%s' % (int(p[0]) + self.dw)
-			y = '%s' % (int(p[1]) + self.dh)
-			polygon.append(','.join([x, y]))
+			polygon.append('%s,%s' % p[:2])
 		text = ' '.join(polygon)
-		templ = '<polygon points="%s" stroke-width="2" />'
+		templ = '<polygon points="%s" stroke-width="1" />'
 		data = templ % text
 		self.write(data)
 
@@ -102,8 +108,8 @@ class SvgAdapter(AdapterInterface):
 		self.group()
 		rx = (int(x2) - int(x1)) / 2
 		ry = (int(y2) - int(y1)) / 2
-		cx = int(x1) + rx + self.dw
-		cy = int(y1) + ry + self.dh
+		cx = int(x1) + rx
+		cy = int(y1) + ry
 		templ = '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" />'
 		data = templ % (cx, cy, rx, ry)
 		self.write(data)
@@ -112,18 +118,23 @@ class SvgAdapter(AdapterInterface):
 		self.group()
 		polyline = []
 		for p in points:
-			x = '%s' % (int(p[0]) + self.dw)
-			y = '%s' % (int(p[1]) + self.dh)
-			polyline.append(','.join([x, y]))
+			polyline.append('%s,%s' % p[:2])
 		text = ' '.join(polyline)
-		templ = '<path d="%s" stroke-width="2" />'
-		templ = '<polyline points="%s" stroke-width="2" /> <!-- spline -->'
-		data = templ % text
+		templ = '<path d="%s" stroke-width="1" />'
+		templ = '<polyline points="%s" stroke-width="1" /> <!-- spline -->'
 		data = templ % text
 		self.write(data)
 
 	def arrow(self, x1, y1, x2, y2):
 		self.group()
 		templ = '<line x1="%s" y1="%s" x2="%s" y2="%s" marker-end="url(#arrow)" stroke-width="1" />'
-		data = templ % (int(x1) + self.dw, int(y1) + self.dh, int(x2) + self.dw, int(y2) + self.dh)
+		data = templ % (x1, y1, x2, y2)
+		self.write(data)
+
+	def rect(self, x1, y1, x2, y2):
+		self.group()
+		w = int(x2) - int(x1)
+		h = int(y2) - int(y1)
+		templ = '<rect x="%s" y="%s" width="%s" height="%s" stroke-width="1" />'
+		data = templ % (x1, y1, w, h)
 		self.write(data)

@@ -14,8 +14,13 @@ class Command:
 
 class SizeCommand(Command):
 	def execute(self):
-		(h, w) = self.params[0].split('x')
-		self.adapter.size(h, w)
+		(w, h) = self.params[0].split('x')
+		self.adapter.size(w, h)
+
+class AngleCommand(Command):
+	def execute(self):
+		a = self.params[0]
+		self.adapter.rotate(a)
 
 class PenColorCommand(Command):
 	def execute(self):
