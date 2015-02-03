@@ -85,11 +85,13 @@ class SvgAdapter(AdapterInterface):
 		data = templ % text
 		self.write(data)
 
-	def ellipse(self, cx, cy, rx, ry):
+	def ellipse(self, x1, y1, x2, y2):
 		self.group()
+		rx = (int(x2) - int(x1)) / 2
+		ry = (int(y2) - int(y1)) / 2
+		cx = int(x1) + rx + self.dw
+		cy = int(y1) + ry + self.dh
 		templ = '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" />'
-		cx = int(cx) + self.dw
-		cy = int(cy) + self.dh
 		data = templ % (cx, cy, rx, ry)
 		self.write(data)
 
