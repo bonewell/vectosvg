@@ -36,6 +36,8 @@ class VecInterpreter(InterpreterInterface):
 			return SplineCommand(params)
 		elif name == 'Arrow':
 			return ArrowCommand(params)
+		elif name == 'Stairs':
+			return StairsCommand(params)
 		else:
 			return None
 

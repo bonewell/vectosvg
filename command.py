@@ -66,3 +66,10 @@ class ArrowCommand(Command):
 		(x1, y1) = self.params[0].strip(',').split(',')
 		(x2, y2) = self.params[1].strip(',').split(',')
 		self.adapter.arrow(x1, y1, x2, y2)
+
+class StairsCommand(Command):
+	def execute(self):
+		(x1, y1) = self.params[0].strip(',').split(',')
+		(x2, y2) = self.params[1].strip(',').split(',')
+		(x3, y3) = self.params[2].strip(',').split(',')
+		self.adapter.rect(x1, y1, x2, y3)
