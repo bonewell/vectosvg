@@ -51,3 +51,11 @@ class EllipseCommand(Command):
 		cx = int(x1) + rx
 		cy = int(y1) + ry
 		self.adapter.ellipse(cx, cy, rx, ry)
+
+class SplineCommand(Command):
+	def execute(self):
+		points = []
+		for p in self.params:
+			(x, y) = p.strip(',').split(',')
+			points.append((x, y))
+		self.adapter.spline(points)
