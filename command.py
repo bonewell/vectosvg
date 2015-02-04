@@ -21,16 +21,11 @@ def translate(x1, y1, x2, y2, t):
 		ty = t * math.cos(a) * -1 # Oy is top to bottom
 	return (tx, ty)
 
-def isborder(x, y, tx, ty, xg, yg):
-	return True
-	#if tx < 0:
-	#	return x >= gx
-	#	
-	#else:
-	#		
-	#else:
-	#	xg = x1
-
+def iscrossed(x, t, g):
+	if t > 0:
+		return x > g
+	else:
+		return x < g
 
 class Command:
 	def __init__(self, params):
@@ -108,7 +103,7 @@ class StairsCommand(Command):
 		yb = int(y1)
 		xe = int(x2)
 		ye = int(y2)
-		while not isborder(xb, yb, tx, ty, int(x3), int(y3)):
+		while not iscrossed(xb, tx, int(x3)) and not iscrossed(yb, ty, int(y3)):
 			self.adapter.line(xb, yb, xe, ye)
 			xb += tx
 			yb += ty
