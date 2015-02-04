@@ -1,6 +1,31 @@
 #!/usr/bin/env python
 
+import math
+
 from adapter import AdapterInterface
+
+# Helpers function. Need to remove Command interface into other file
+def translate(x1, y1, x2, y2, t):
+	dx = x2 - x1
+	dy = y2 - y1
+	if dx == 0:
+		tx = 0
+		ty = t * (dy / dy) * -1 # Oy is top to bottom
+	elif dy == 0:
+		tx = t * (dx / dx)
+		ty = 0
+	else:
+		tga = dx / dy
+		a = math.atan(tga)
+		tx = t * math.sin(a) * -1 # Oy is top to bottom
+		ty = t * math.cos(a) * -1 # Oy is top to bottom
+	return (tx, ty)
+
+def iscrossed(x, t, g):
+	if t > 0:
+		return x > g
+	else:
+		return x < g
 
 class Command:
 	def __init__(self, params):
@@ -66,3 +91,21 @@ class ArrowCommand(Command):
 		(x1, y1) = self.params[0].strip(',').split(',')
 		(x2, y2) = self.params[1].strip(',').split(',')
 		self.adapter.arrow(x1, y1, x2, y2)
+
+class StairsCommand(Command):
+	def execute(self):
+		(x1, y1) = self.params[0].strip(',').split(',')
+		(x2, y2) = self.params[1].strip(',').split(',')
+		(x3, y3) = self.params[2].strip(',').split(',')
+		t = 4
+		(tx, ty) = translate(int(x1), int(y1), int(x3), int(y3), t)
+		xb = int(x1)
+		yb = int(y1)
+		xe = int(x2)
+		ye = int(y2)
+		while not iscrossed(xb, tx, int(x3)) and not iscrossed(yb, ty, int(y3)):
+			self.adapter.line(xb, yb, xe, ye)
+			xb += tx
+			yb += ty
+			xe += tx
+			ye += ty
