@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import cgi
 from adapter import AdapterInterface
 
 class SvgAdapter(AdapterInterface):
@@ -137,4 +138,10 @@ class SvgAdapter(AdapterInterface):
 		h = int(y2) - int(y1)
 		templ = '<rect x="%s" y="%s" width="%s" height="%s" stroke-width="1" />'
 		data = templ % (x1, y1, w, h)
+		self.write(data)
+
+	def text(self, x, y, text, size, font):
+		self.group()
+		templ = '<text x="%s" y="%s" font-family="%s" font-size="%s" fill="#%s" stroke-width="0">%s</text>'
+		data = templ % (x, int(y) + int(size), font, size, self.stroke, cgi.escape(text))
 		self.write(data)

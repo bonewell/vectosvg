@@ -4,7 +4,6 @@ import math
 
 from adapter import AdapterInterface
 
-# Helpers function. Need to remove Command interface into other file
 def translate(x1, y1, x2, y2, t):
 	dx = x2 - x1
 	dy = y2 - y1
@@ -15,10 +14,9 @@ def translate(x1, y1, x2, y2, t):
 		tx = t * (dx / dx)
 		ty = 0
 	else:
-		tga = dx / dy
-		a = math.atan(tga)
-		tx = t * math.sin(a) * -1 # Oy is top to bottom
-		ty = t * math.cos(a) * -1 # Oy is top to bottom
+		a = math.atan2(dx, dy)
+		tx = t * math.sin(a)
+		ty = t * math.cos(a)
 	return (tx, ty)
 
 def iscrossed(x, t, g):
@@ -109,3 +107,13 @@ class StairsCommand(Command):
 			yb += ty
 			xe += tx
 			ye += ty
+
+class AngleTextOutCommand(Command):
+	def execute(self):
+		font = self.params[1].strip(',')
+		size = self.params[2].strip(',')
+		x = self.params[3].strip(',')
+		y = self.params[4].strip(',')
+		text = ' '.join(self.params[5:]).split(',')[0]
+		text = text.decode('windows-1251').encode('UTF-8')
+		self.adapter.text(x, y, text, size, font)

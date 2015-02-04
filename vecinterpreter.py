@@ -38,6 +38,8 @@ class VecInterpreter(InterpreterInterface):
 			return ArrowCommand(params)
 		elif name == 'Stairs':
 			return StairsCommand(params)
+		elif name == 'AngleTextOut':
+			return AngleTextOutCommand(params)
 		else:
 			return None
 

@@ -30,3 +30,6 @@ class AdapterInterface:
 
 	def rect(self, x1, y1, x2, y2):
 		pass
+
+	def text(self, x, y, text, size, font):
+		pass
