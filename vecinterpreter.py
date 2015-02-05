@@ -40,6 +40,8 @@ class VecInterpreter(InterpreterInterface):
 			return StairsCommand(params)
 		elif name == 'AngleTextOut':
 			return AngleTextOutCommand(params)
+		elif name == 'TextOut':
+			return TextOutCommand(params)
 #		elif name == 'Railway':
 #			return RailwayCommand(params)
 		else:
@@ -65,7 +67,10 @@ class VecIterator(IteratorInterface):
 		if not name or name[0] == ';':
 			return self.next()
 
-		params = tokens[1:]
+		params = ' '.join(tokens[1:]).split(',')
+		for p in params:
+			p.strip()
+#		print 'Name: %s - %s' % (name, params)
 		cmd = self.container.command(name, params)
 		if cmd == None:
 			return self.next()

@@ -9,8 +9,6 @@ class SvgAdapter(AdapterInterface):
 		self.stroke = '000000'
 		self.fill = 'none'
 		self.newgroup = False
-		self.head()
-		self.defs()
 
 	def __del__(self):
 		self.endgroup()
@@ -21,8 +19,9 @@ class SvgAdapter(AdapterInterface):
 	def write(self, data):
 		self.f.write('%s\n' % data)
 
-	def head(self):
-		data = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">'
+	def head(self, w, h):
+		templ = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="%s" height="%s">'
+		data = templ % (w, h)
 		self.write(data)
 
 	def defs(self):
@@ -58,9 +57,11 @@ class SvgAdapter(AdapterInterface):
 	def size(self, w, h):
 		self.cx = int(w)/2
 		self.cy = int(h)/2
+		self.head(w, h)
+		self.defs()
 
 	def rotate(self, a):
-		self.a = int(a) * -1
+		self.a = float(a) * -1
 		self.root()
 		self.startgroup()
 
@@ -144,5 +145,5 @@ class SvgAdapter(AdapterInterface):
 	def text(self, x, y, text, size, font):
 		self.group()
 		templ = '<text x="%s" y="%s" font-family="%s" font-size="%s" fill="#%s" stroke-width="0">%s</text>'
-		data = templ % (x, int(y) + int(size), font, size, self.stroke, cgi.escape(text))
+		data = templ % (x, float(y) + float(size), font, size, self.stroke, cgi.escape(text))
 		self.write(data)
