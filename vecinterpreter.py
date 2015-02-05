@@ -41,6 +41,7 @@ class VecInterpreter(InterpreterInterface):
 		elif name == 'AngleTextOut':
 			return AngleTextOutCommand(params)
 		else:
+			print 'Unknown command: %s' % name
 			return None
 
 class VecIterator(IteratorInterface):
@@ -51,6 +52,7 @@ class VecIterator(IteratorInterface):
 		line = self.container.line()
 		if not line:
 			return None
+		print line
 		tokens = line.strip().split(' ')
 		name = tokens[0]
 		params = tokens[1:]

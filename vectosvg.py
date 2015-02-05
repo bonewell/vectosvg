@@ -6,18 +6,18 @@ from vecinterpreter import VecInterpreter
 from svgadapter import SvgAdapter
 
 """This script converts vec files of pMap to SVG"""
-archive = 'Peterburg.pmz'
-files = ['Avtovo.vec']
-
-iszip = zipfile.is_zipfile(archive)
-
-print "File is corect: %s" % iszip
+city = 'Peterburg'
+archive = '%s.pmz' % city
+#files = ['Avtovo.vec']
 
 def main():
+	iszip = zipfile.is_zipfile(archive)
+	print "File is corect: %s" % iszip
+
 	if iszip:
 		zf = zipfile.ZipFile(archive, 'r')
-#		files = [ f for f in zf.namelist() if isvec(f) ]
-		zf.extractall('.', files)
+		files = [ f for f in zf.namelist() if isvec(f) ]
+		zf.extractall(city, files)
 		process(files)
 
 def convert(fi, fo):
@@ -45,15 +45,10 @@ def convert(fi, fo):
 
 def process(files):
 	for fname in files:
-		fi = open(fname, 'r')
-		fo = open(name(fname), 'w')
-		svg = SvgAdapter(fo)
-		vec = VecInterpreter()
-		for line in fi:
-			cmd = vec.interpret(line)
-			cmd.write(svg)
-		fo.close()
-		fi.close()
+		inp = '%s/%s' % (city, fname)
+		out = '%s/%s' % (city, name(fname))
+		print 'Input: %s Output: %s\n' % (inp, out)
+		convert(inp, out)
 
 def isvec(f):
 	(name, ext) = f.split('.')
@@ -61,7 +56,7 @@ def isvec(f):
 
 def name(f):
 	(name, ext) = f.split('.')
-	return name+'.svg'
+	return '%s.svg' % name
 
 def convert(inp, out):
 	con = Converter()
@@ -69,4 +64,4 @@ def convert(inp, out):
 	svg = SvgAdapter(out)
 	con.convert(vec, svg)
 
-convert('Avtovo.vec', 'Avtovo.svg')
+main()

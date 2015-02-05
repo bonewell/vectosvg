@@ -8,6 +8,7 @@ class SvgAdapter(AdapterInterface):
 		self.f = open(filename, 'w')
 		self.stroke = '000000'
 		self.fill = 'none'
+		self.newgroup = False
 		self.head()
 		self.defs()
 

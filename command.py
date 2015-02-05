@@ -47,7 +47,8 @@ class AngleCommand(Command):
 
 class PenColorCommand(Command):
 	def execute(self):
-		self.adapter.pencolor(self.params[0])
+		if self.params:
+			self.adapter.pencolor(self.params[0])
 
 class BrushColorCommand(Command):
 	def execute(self):
@@ -58,7 +59,7 @@ class LineCommand(Command):
 		points = []
 		for p in self.params:
 			if p.find(',') != -1: # end value can be no point
-				(x, y) = p.strip(',').split(',')
+				(x, y) = p.strip(',').split(',')[:2]
 			points.append((x, y))
 		self.adapter.polyline(points)
 
@@ -66,7 +67,8 @@ class PolygonCommand(Command):
 	def execute(self):
 		points = []
 		for p in self.params:
-			(x, y) = p.strip(',').split(',')
+			if p.find(',') != -1: # end value can be no point
+				(x, y) = p.strip(',').split(',')
 			points.append((x, y))
 		self.adapter.polygon(points)
 
@@ -80,14 +82,15 @@ class SplineCommand(Command):
 	def execute(self):
 		points = []
 		for p in self.params:
-			(x, y) = p.strip(',').split(',')
-			points.append((x, y))
+			if p.find(',') != -1: # end value can be no point
+				(x, y) = p.strip(',').split(',')
+				points.append((x, y))
 		self.adapter.spline(points)
 
 class ArrowCommand(Command):
 	def execute(self):
 		(x1, y1) = self.params[0].strip(',').split(',')
-		(x2, y2) = self.params[1].strip(',').split(',')
+		(x2, y2) = self.params[1].strip(',').split(',')[:2]
 		self.adapter.arrow(x1, y1, x2, y2)
 
 class StairsCommand(Command):
