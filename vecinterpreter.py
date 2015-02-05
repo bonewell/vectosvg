@@ -18,7 +18,7 @@ class VecInterpreter(InterpreterInterface):
 		return self.f.readline()
 
 	def command(self, name, params):
-		if name == 'Size':
+		if name == 'Size' or name == 'size':
 			return SizeCommand(params)
 		elif name == 'Angle':
 			return AngleCommand(params)
@@ -40,6 +40,8 @@ class VecInterpreter(InterpreterInterface):
 			return StairsCommand(params)
 		elif name == 'AngleTextOut':
 			return AngleTextOutCommand(params)
+#		elif name == 'Railway':
+#			return RailwayCommand(params)
 		else:
 			print 'Unknown command: %s' % name
 			return None
@@ -51,10 +53,18 @@ class VecIterator(IteratorInterface):
 	def next(self):
 		line = self.container.line()
 		if not line:
-			return None
+			return None # end file
+
 		print line
+
 		tokens = line.strip().split(' ')
-		name = tokens[0]
+		if not tokens:
+			return self.next()
+
+		name = tokens[0].strip()
+		if not name or name[0] == ';':
+			return self.next()
+
 		params = tokens[1:]
 		cmd = self.container.command(name, params)
 		if cmd == None:

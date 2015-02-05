@@ -120,3 +120,27 @@ class AngleTextOutCommand(Command):
 		text = ' '.join(self.params[5:]).split(',')[0]
 		text = text.decode('windows-1251').encode('UTF-8')
 		self.adapter.text(x, y, text, size, font)
+
+class RailwayCommand(Command):
+	def execute(self):
+		(x1, y1) = self.params[3].strip(',').split(',')
+		(x2, y2) = self.params[4].strip(',').split(',')
+		if self.params.__len__ > 4:
+			(x3, y3) = self.params[5].strip(',').split(',')
+		else:
+			x3 = 0
+			y3 = 0
+		t = 4
+		(tx, ty) = translate(int(x1), int(y1), int(x3), int(y3), t)
+		xb = int(x1)
+		yb = int(y1)
+		xe = int(x2)
+		ye = int(y2)
+		while not iscrossed(xb, tx, int(x3)) and not iscrossed(yb, ty, int(y3)):
+			self.adapter.line(xb, yb, xe, ye)
+			xb += tx
+			yb += ty
+			xe += tx
+			ye += ty
+
+

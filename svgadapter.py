@@ -92,7 +92,7 @@ class SvgAdapter(AdapterInterface):
 		for p in points:
 			polyline.append('%s,%s' % p[:2])
 		text = ' '.join(polyline)
-		templ = '<polyline points="%s" stroke-width="1" />'
+		templ = '<polyline points="%s" stroke-width="1" fill="white" />'
 		data = templ % text
 		self.write(data)
 
