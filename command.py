@@ -8,10 +8,12 @@ def translate(x1, y1, x2, y2, t):
 	dx = x2 - x1
 	dy = y2 - y1
 	if dx == 0:
+		z = -1 if dy < 0 else 1
 		tx = 0
-		ty = t * (dy / dy) * -1 # Oy is top to bottom
+		ty = t * z
 	elif dy == 0:
-		tx = t * (dx / dx)
+		z = -1 if dx < 0 else 1
+		tx = t * z
 		ty = 0
 	else:
 		a = math.atan2(dx, dy)
@@ -149,19 +151,41 @@ class TextOutCommand(Command):
 
 class RailwayCommand(Command):
 	def execute(self):
-		(x1, y1, x2, y2) = self.params[:4]
-		if len(self.params) > 4:
-			(x1, y1, x2, y2, x3, y3) = self.params[:6]
-		else:
-			x3 = 0
-			y3 = 0
-		t = 4
-		(tx, ty) = translate(int(x1), int(y1), int(x3), int(y3), t)
-		xb = int(x1)
-		yb = int(y1)
-		xe = int(x2)
-		ye = int(y2)
-		while not iscrossed(xb, tx, int(x3)) and not iscrossed(yb, ty, int(y3)):
+		w1 = self.params[0]
+		w2 = self.params[1]
+		t = self.params[2]
+		(x1, y1, x2, y2) = self.params[3:7]
+		(ry, rx) = translate(int(x1), int(y1), int(x2), int(y2), int(w1) / 2)
+		xb = int(x1) + rx
+		yb = int(y1) + ry
+		xe = int(x2) + rx
+		ye = int(y2) + ry
+		self.adapter.line(xb, yb, xe, yb)
+
+		xb = int(x1) - rx
+		yb = int(y1) - ry
+		xe = int(x2) - rx
+		ye = int(y2) - ry
+		self.adapter.line(xb, yb, xe, yb)
+		#if len(self.params) > 4:
+		#	(x1, y1, x2, y2, x3, y3) = self.params[:6]
+		#else:
+		#	x3 = 0
+		#	y3 = 0
+		(sy, sx) = translate(int(x1), int(y1), int(x2), int(y2), int(w2) / 2)
+		sx1 = int(x1) + sx
+		sy1 = int(y1) + sy
+		sx2 = int(x1) - sx
+		sy2 = int(y1) - sy
+		sx3 = int(x2) + sx
+		sy3 = int(y2) + sy
+
+		(tx, ty) = translate(sx1, sy1, sx3, sy3, int(t))
+		xb = sx1 + tx
+		yb = sy1 + ty
+		xe = sx2 + tx
+		ye = sy2 + ty
+		while not iscrossed(xb, tx, sx3 - tx) and not iscrossed(yb, ty, sy3 - ty):
 			self.adapter.line(xb, yb, xe, ye)
 			xb += tx
 			yb += ty

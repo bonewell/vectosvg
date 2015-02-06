@@ -46,8 +46,8 @@ class VecInterpreter(InterpreterInterface):
 			return AngleTextOutCommand(params)
 		elif name == 'TextOut':
 			return TextOutCommand(params)
-#		elif name == 'Railway':
-#			return RailwayCommand(params)
+		elif name == 'Railway':
+			return RailwayCommand(params)
 		else:
 			print 'Unknown command: %s' % name
 			return None

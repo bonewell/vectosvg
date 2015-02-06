@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import cgi
+import math
 from adapter import AdapterInterface
 
 class SvgAdapter(AdapterInterface):
@@ -124,7 +125,7 @@ class SvgAdapter(AdapterInterface):
 		cx = int(x1) + rx
 		cy = int(y1) + ry
 		templ = '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" />'
-		data = templ % (cx, cy, rx, ry)
+		data = templ % (cx, cy, math.fabs(rx), math.fabs(ry))
 		self.write(data)
 
 	def spline(self, points):
