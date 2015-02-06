@@ -115,22 +115,22 @@ class StairsCommand(Command):
 
 class AngleTextOutCommand(Command):
 	def execute(self):
-		a = self.params[0] # angle is't used now
-		font = self.params[1]
+		a = self.params[0]
+		font = self.params[1].strip()
 		size = self.params[2]
 		(x, y) = self.params[3:5]
-		text = self.params[5]
+		text = self.params[5].strip()
 		text = text.decode('windows-1251').encode('UTF-8')
-		self.adapter.text(x, y, text, size, font)
+		self.adapter.text(x, y, text, size, font, float(a))
 
 class TextOutCommand(Command):
 	def execute(self):
-		font = self.params[0]
+		font = self.params[0].strip()
 		size = self.params[1]
 		(x, y) = self.params[2:4]
-		text = self.params[4]
+		text = self.params[4].strip()
 		text = text.decode('windows-1251').encode('UTF-8')
-		self.adapter.text(x, y, text, size, font)
+		self.adapter.text(x, y, text, size, font, 0)
 
 class RailwayCommand(Command):
 	def execute(self):

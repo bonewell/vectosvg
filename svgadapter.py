@@ -9,8 +9,12 @@ class SvgAdapter(AdapterInterface):
 		self.stroke = '000000'
 		self.fill = 'none'
 		self.newgroup = False
+		self.head()
+		self.defs()
+		self.startgroup()
 
 	def __del__(self):
+		self.endgroup()
 		self.endgroup()
 		self.endgroup()
 		self.tail()
@@ -19,9 +23,8 @@ class SvgAdapter(AdapterInterface):
 	def write(self, data):
 		self.f.write('%s\n' % data)
 
-	def head(self, w, h):
-		templ = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="%s" height="%s">'
-		data = templ % (w, h)
+	def head(self):
+		data = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">'
 		self.write(data)
 
 	def defs(self):
@@ -57,8 +60,7 @@ class SvgAdapter(AdapterInterface):
 	def size(self, w, h):
 		self.cx = int(w)/2
 		self.cy = int(h)/2
-		self.head(w, h)
-		self.defs()
+		self.rect(0, 0, w, h)
 
 	def rotate(self, a):
 		self.a = float(a) * -1
@@ -93,8 +95,8 @@ class SvgAdapter(AdapterInterface):
 		for p in points:
 			polyline.append('%s,%s' % p[:2])
 		text = ' '.join(polyline)
-		templ = '<polyline points="%s" stroke-width="1" fill="white" />'
-		data = templ % text
+		templ = '<polyline points="%s" stroke-width="1" fill="%s" />'
+		data = templ % (text, self.fill)
 		self.write(data)
 
 	def polygon(self, points):
@@ -138,12 +140,16 @@ class SvgAdapter(AdapterInterface):
 		self.group()
 		w = int(x2) - int(x1)
 		h = int(y2) - int(y1)
-		templ = '<rect x="%s" y="%s" width="%s" height="%s" stroke-width="1" />'
+		templ = '<rect x="%s" y="%s" width="%s" height="%s" stroke-width="1" fill="white" />'
 		data = templ % (x1, y1, w, h)
 		self.write(data)
 
-	def text(self, x, y, text, size, font):
+	def text(self, x, y, text, size, font, a):
 		self.group()
-		templ = '<text x="%s" y="%s" font-family="%s" font-size="%s" fill="#%s" stroke-width="0">%s</text>'
-		data = templ % (x, float(y) + float(size), font, size, self.stroke, cgi.escape(text))
+		if not a:
+			templ = '<text x="%s" y="%s" font-family="%s" font-size="%s" fill="#%s" stroke-width="0">%s</text>'
+			data = templ % (x, float(y) + float(size), font, size, self.stroke, cgi.escape(text))
+		else:
+			templ = '<text x="%s" y="%s" font-family="%s" font-size="%s" fill="#%s" transform="rotate(%s)" stroke-width="0">%s</text>'
+			data = templ % (x, float(y) + float(size), font, size, self.stroke, a, cgi.escape(text))
 		self.write(data)
