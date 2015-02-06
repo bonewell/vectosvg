@@ -26,6 +26,8 @@ class VecInterpreter(InterpreterInterface):
 			return PenColorCommand(params)
 		elif name == 'BrushColor':
 			return BrushColorCommand(params)
+		elif name == 'Opaque':
+			return OpaqueCommand(params)
 		elif name == 'Line':
 			return LineCommand(params)
 		elif name == 'Polygon':

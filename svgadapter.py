@@ -8,6 +8,7 @@ class SvgAdapter(AdapterInterface):
 		self.f = open(filename, 'w')
 		self.stroke = '000000'
 		self.fill = 'none'
+		self.opacity = 1.0
 		self.newgroup = False
 		self.head()
 		self.defs()
@@ -44,7 +45,7 @@ class SvgAdapter(AdapterInterface):
 		self.write(data)
 
 	def startgroup(self):
-		data = '<g stroke="#%s" fill="%s" >' % (self.stroke, self.fill)
+		data = '<g stroke="#%s" fill="%s" fill-opacity="%s">' % (self.stroke, self.fill, self.opacity)
 		self.write(data)
 
 	def endgroup(self):
@@ -81,6 +82,10 @@ class SvgAdapter(AdapterInterface):
 			self.fill = 'none'
 		else:
 			self.fill = '#%s' % color
+		self.newgroup = True
+
+	def opaque(self, v):
+		self.opacity = float(v) / 100
 		self.newgroup = True
 
 	def line(self, x1, y1, x2, y2):

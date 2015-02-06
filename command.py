@@ -54,6 +54,10 @@ class BrushColorCommand(Command):
 	def execute(self):
 		self.adapter.brushcolor(self.params[0])
 
+class OpaqueCommand(Command):
+	def execute(self):
+		self.adapter.opaque(self.params[0])
+
 class LineCommand(Command):
 	def execute(self):
 		points = []
