@@ -150,6 +150,7 @@ class SvgAdapter(AdapterInterface):
 			templ = '<text x="%s" y="%s" font-family="%s" font-size="%s" fill="#%s" stroke-width="0">%s</text>'
 			data = templ % (x, float(y) + float(size), font, size, self.stroke, cgi.escape(text))
 		else:
-			templ = '<text x="%s" y="%s" font-family="%s" font-size="%s" fill="#%s" transform="rotate(%s)" stroke-width="0">%s</text>'
-			data = templ % (x, float(y) + float(size), font, size, self.stroke, a, cgi.escape(text))
+			a *= -1
+			templ = '<text x="%s" y="%s" font-family="%s" font-size="%s" fill="#%s" transform="rotate(%s %s %s)" stroke-width="0">%s</text>'
+			data = templ % (x, float(y) + float(size), font, size, self.stroke, a, x, y, cgi.escape(text))
 		self.write(data)
