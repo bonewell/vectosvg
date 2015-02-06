@@ -94,14 +94,17 @@ class SvgAdapter(AdapterInterface):
 		data = templ % (x1, y1, x2, y2)
 		self.write(data)
 
-	def polyline(self, points):
+	def polyline(self, points, dashed=False):
 		self.group()
 		polyline = []
 		for p in points:
 			polyline.append('%s,%s' % p[:2])
 		text = ' '.join(polyline)
-		templ = '<polyline points="%s" stroke-width="1" fill="none" />'
-		data = templ % text
+		dasharray = ''
+		if dashed:
+			dasharray = 'stroke-dasharray="5,2"'
+		templ = '<polyline points="%s" stroke-width="1" fill="none" %s />'
+		data = templ % (text, dasharray)
 		self.write(data)
 
 	def polygon(self, points):

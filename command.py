@@ -69,6 +69,17 @@ class LineCommand(Command):
 				points.append((x, y))
 		self.adapter.polyline(points)
 
+class DashedCommand(Command):
+	def execute(self):
+		points = []
+		for i in range(len(self.params)):
+			if i % 2 == 0:
+				x = self.params[i]
+			else:
+				y = self.params[i]
+				points.append((x, y))
+		self.adapter.polyline(points, True)
+
 class PolygonCommand(Command):
 	def execute(self):
 		points = []

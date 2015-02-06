@@ -30,6 +30,8 @@ class VecInterpreter(InterpreterInterface):
 			return OpaqueCommand(params)
 		elif name == 'Line':
 			return LineCommand(params)
+		elif name == 'Dashed':
+			return DashedCommand(params)
 		elif name == 'Polygon':
 			return PolygonCommand(params)
 		elif name == 'Ellipse':
