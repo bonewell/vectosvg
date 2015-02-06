@@ -95,8 +95,8 @@ class SvgAdapter(AdapterInterface):
 		for p in points:
 			polyline.append('%s,%s' % p[:2])
 		text = ' '.join(polyline)
-		templ = '<polyline points="%s" stroke-width="1" fill="%s" />'
-		data = templ % (text, self.fill)
+		templ = '<polyline points="%s" stroke-width="1" fill="none" />'
+		data = templ % text
 		self.write(data)
 
 	def polygon(self, points):
@@ -126,7 +126,7 @@ class SvgAdapter(AdapterInterface):
 			polyline.append('%s,%s' % p[:2])
 		text = ' '.join(polyline)
 		templ = '<path d="%s" stroke-width="1" />'
-		templ = '<polyline points="%s" stroke-width="1" /> <!-- spline -->'
+		templ = '<polyline points="%s" stroke-width="1" fill="none"/> <!-- spline -->'
 		data = templ % text
 		self.write(data)
 
