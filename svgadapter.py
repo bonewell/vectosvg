@@ -8,11 +8,14 @@ class SvgAdapter(AdapterInterface):
 		self.f = open(filename, 'w')
 		self.stroke = '000000'
 		self.fill = 'none'
+		self.opacity = 1.0
 		self.newgroup = False
 		self.head()
 		self.defs()
+		self.startgroup()
 
 	def __del__(self):
+		self.endgroup()
 		self.endgroup()
 		self.endgroup()
 		self.tail()
@@ -42,7 +45,7 @@ class SvgAdapter(AdapterInterface):
 		self.write(data)
 
 	def startgroup(self):
-		data = '<g stroke="#%s" fill="%s" >' % (self.stroke, self.fill)
+		data = '<g stroke="#%s" fill="%s" fill-opacity="%s">' % (self.stroke, self.fill, self.opacity)
 		self.write(data)
 
 	def endgroup(self):
@@ -58,9 +61,10 @@ class SvgAdapter(AdapterInterface):
 	def size(self, w, h):
 		self.cx = int(w)/2
 		self.cy = int(h)/2
+		self.rect(0, 0, w, h)
 
 	def rotate(self, a):
-		self.a = int(a) * -1
+		self.a = float(a) * -1
 		self.root()
 		self.startgroup()
 
@@ -80,20 +84,27 @@ class SvgAdapter(AdapterInterface):
 			self.fill = '#%s' % color
 		self.newgroup = True
 
+	def opaque(self, v):
+		self.opacity = float(v) / 100
+		self.newgroup = True
+
 	def line(self, x1, y1, x2, y2):
 		self.group()
 		templ = '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke-width="1" />'
 		data = templ % (x1, y1, x2, y2)
 		self.write(data)
 
-	def polyline(self, points):
+	def polyline(self, points, dashed=False):
 		self.group()
 		polyline = []
 		for p in points:
 			polyline.append('%s,%s' % p[:2])
 		text = ' '.join(polyline)
-		templ = '<polyline points="%s" stroke-width="1" />'
-		data = templ % text
+		dasharray = ''
+		if dashed:
+			dasharray = 'stroke-dasharray="5,2"'
+		templ = '<polyline points="%s" stroke-width="1" fill="none" %s />'
+		data = templ % (text, dasharray)
 		self.write(data)
 
 	def polygon(self, points):
@@ -123,7 +134,7 @@ class SvgAdapter(AdapterInterface):
 			polyline.append('%s,%s' % p[:2])
 		text = ' '.join(polyline)
 		templ = '<path d="%s" stroke-width="1" />'
-		templ = '<polyline points="%s" stroke-width="1" /> <!-- spline -->'
+		templ = '<polyline points="%s" stroke-width="1" fill="none"/> <!-- spline -->'
 		data = templ % text
 		self.write(data)
 
@@ -137,12 +148,17 @@ class SvgAdapter(AdapterInterface):
 		self.group()
 		w = int(x2) - int(x1)
 		h = int(y2) - int(y1)
-		templ = '<rect x="%s" y="%s" width="%s" height="%s" stroke-width="1" />'
+		templ = '<rect x="%s" y="%s" width="%s" height="%s" stroke-width="1" fill="white" />'
 		data = templ % (x1, y1, w, h)
 		self.write(data)
 
-	def text(self, x, y, text, size, font):
+	def text(self, x, y, text, size, font, a):
 		self.group()
-		templ = '<text x="%s" y="%s" font-family="%s" font-size="%s" fill="#%s" stroke-width="0">%s</text>'
-		data = templ % (x, int(y) + int(size), font, size, self.stroke, cgi.escape(text))
+		if not a:
+			templ = '<text x="%s" y="%s" font-family="%s" font-size="%s" fill="#%s" stroke-width="0">%s</text>'
+			data = templ % (x, float(y) + float(size), font, size, self.stroke, cgi.escape(text))
+		else:
+			a *= -1
+			templ = '<text x="%s" y="%s" font-family="%s" font-size="%s" fill="#%s" transform="rotate(%s %s %s)" stroke-width="0">%s</text>'
+			data = templ % (x, float(y) + float(size), font, size, self.stroke, a, x, y, cgi.escape(text))
 		self.write(data)

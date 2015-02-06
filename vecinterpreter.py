@@ -18,7 +18,7 @@ class VecInterpreter(InterpreterInterface):
 		return self.f.readline()
 
 	def command(self, name, params):
-		if name == 'Size':
+		if name == 'Size' or name == 'size':
 			return SizeCommand(params)
 		elif name == 'Angle':
 			return AngleCommand(params)
@@ -26,8 +26,12 @@ class VecInterpreter(InterpreterInterface):
 			return PenColorCommand(params)
 		elif name == 'BrushColor':
 			return BrushColorCommand(params)
+		elif name == 'Opaque':
+			return OpaqueCommand(params)
 		elif name == 'Line':
 			return LineCommand(params)
+		elif name == 'Dashed':
+			return DashedCommand(params)
 		elif name == 'Polygon':
 			return PolygonCommand(params)
 		elif name == 'Ellipse':
@@ -40,6 +44,10 @@ class VecInterpreter(InterpreterInterface):
 			return StairsCommand(params)
 		elif name == 'AngleTextOut':
 			return AngleTextOutCommand(params)
+		elif name == 'TextOut':
+			return TextOutCommand(params)
+#		elif name == 'Railway':
+#			return RailwayCommand(params)
 		else:
 			print 'Unknown command: %s' % name
 			return None
@@ -51,11 +59,22 @@ class VecIterator(IteratorInterface):
 	def next(self):
 		line = self.container.line()
 		if not line:
-			return None
+			return None # end file
+
 		print line
+
 		tokens = line.strip().split(' ')
-		name = tokens[0]
-		params = tokens[1:]
+		if not tokens:
+			return self.next()
+
+		name = tokens[0].strip()
+		if not name or name[0] == ';':
+			return self.next()
+
+		params = ' '.join(tokens[1:]).split(',')
+		for p in params:
+			p.strip()
+#		print 'Name: %s - %s' % (name, params)
 		cmd = self.container.command(name, params)
 		if cmd == None:
 			return self.next()

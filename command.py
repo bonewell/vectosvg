@@ -54,50 +54,67 @@ class BrushColorCommand(Command):
 	def execute(self):
 		self.adapter.brushcolor(self.params[0])
 
+class OpaqueCommand(Command):
+	def execute(self):
+		self.adapter.opaque(self.params[0])
+
 class LineCommand(Command):
 	def execute(self):
 		points = []
-		for p in self.params:
-			if p.find(',') != -1: # end value can be no point
-				(x, y) = p.strip(',').split(',')[:2]
-			points.append((x, y))
+		for i in range(len(self.params)):
+			if i % 2 == 0:
+				x = self.params[i]
+			else:
+				y = self.params[i]
+				points.append((x, y))
 		self.adapter.polyline(points)
+
+class DashedCommand(Command):
+	def execute(self):
+		points = []
+		for i in range(len(self.params)):
+			if i % 2 == 0:
+				x = self.params[i]
+			else:
+				y = self.params[i]
+				points.append((x, y))
+		self.adapter.polyline(points, True)
 
 class PolygonCommand(Command):
 	def execute(self):
 		points = []
-		for p in self.params:
-			if p.find(',') != -1: # end value can be no point
-				(x, y) = p.strip(',').split(',')
-			points.append((x, y))
+		for i in range(len(self.params)):
+			if i % 2 == 0:
+				x = self.params[i]
+			else:
+				y = self.params[i]
+				points.append((x, y))
 		self.adapter.polygon(points)
 
 class EllipseCommand(Command):
 	def execute(self):
-		(x1, y1) = self.params[0].strip(',').split(',')
-		(x2, y2) = self.params[1].strip(',').split(',')
+		(x1, y1, x2, y2) = self.params[:4]
 		self.adapter.ellipse(x1, y1, x2, y2)
 
 class SplineCommand(Command):
 	def execute(self):
 		points = []
-		for p in self.params:
-			if p.find(',') != -1: # end value can be no point
-				(x, y) = p.strip(',').split(',')
+		for i in range(len(self.params)):
+			if i % 2 == 0:
+				x = self.params[i]
+			else:
+				y = self.params[i]
 				points.append((x, y))
 		self.adapter.spline(points)
 
 class ArrowCommand(Command):
 	def execute(self):
-		(x1, y1) = self.params[0].strip(',').split(',')
-		(x2, y2) = self.params[1].strip(',').split(',')[:2]
+		(x1, y1, x2, y2) = self.params[:4]
 		self.adapter.arrow(x1, y1, x2, y2)
 
 class StairsCommand(Command):
 	def execute(self):
-		(x1, y1) = self.params[0].strip(',').split(',')
-		(x2, y2) = self.params[1].strip(',').split(',')
-		(x3, y3) = self.params[2].strip(',').split(',')
+		(x1, y1, x2, y2, x3, y3) = self.params[:6]
 		t = 4
 		(tx, ty) = translate(int(x1), int(y1), int(x3), int(y3), t)
 		xb = int(x1)
@@ -113,10 +130,42 @@ class StairsCommand(Command):
 
 class AngleTextOutCommand(Command):
 	def execute(self):
-		font = self.params[1].strip(',')
-		size = self.params[2].strip(',')
-		x = self.params[3].strip(',')
-		y = self.params[4].strip(',')
-		text = ' '.join(self.params[5:]).split(',')[0]
+		a = self.params[0]
+		font = self.params[1].strip()
+		size = self.params[2]
+		(x, y) = self.params[3:5]
+		text = self.params[5].strip()
 		text = text.decode('windows-1251').encode('UTF-8')
-		self.adapter.text(x, y, text, size, font)
+		self.adapter.text(x, y, text, size, font, float(a))
+
+class TextOutCommand(Command):
+	def execute(self):
+		font = self.params[0].strip()
+		size = self.params[1]
+		(x, y) = self.params[2:4]
+		text = self.params[4].strip()
+		text = text.decode('windows-1251').encode('UTF-8')
+		self.adapter.text(x, y, text, size, font, 0)
+
+class RailwayCommand(Command):
+	def execute(self):
+		(x1, y1, x2, y2) = self.params[:4]
+		if len(self.params) > 4:
+			(x1, y1, x2, y2, x3, y3) = self.params[:6]
+		else:
+			x3 = 0
+			y3 = 0
+		t = 4
+		(tx, ty) = translate(int(x1), int(y1), int(x3), int(y3), t)
+		xb = int(x1)
+		yb = int(y1)
+		xe = int(x2)
+		ye = int(y2)
+		while not iscrossed(xb, tx, int(x3)) and not iscrossed(yb, ty, int(y3)):
+			self.adapter.line(xb, yb, xe, ye)
+			xb += tx
+			yb += ty
+			xe += tx
+			ye += ty
+
+

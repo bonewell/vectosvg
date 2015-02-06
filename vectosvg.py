@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import os
+import shutil
 import zipfile
 
 from converter import Converter
@@ -6,19 +8,34 @@ from vecinterpreter import VecInterpreter
 from svgadapter import SvgAdapter
 
 """This script converts vec files of pMap to SVG"""
-city = 'Peterburg'
-archive = '%s.pmz' % city
-#files = ['Avtovo.vec']
+
+source = '/home/bone/tmp/pMetro'
+dest = '/home/bone/tmp/subway'
+tmp = '/home/bone/tmp'
+
+def cities():
+	names = []
+	for dirpath, dirnames, filenames in os.walk(source):
+		for fname in filenames:
+			(name, ext) = os.path.splitext(fname)
+			if ext == '.pmz':
+				names.append(name)
+	return names
 
 def main():
-	iszip = zipfile.is_zipfile(archive)
-	print "File is corect: %s" % iszip
+	for name in cities():
+		archive = '%s/%s.pmz' % (source, name)
+		iszip = zipfile.is_zipfile(archive)
+		print 'File \'%s\' is corect: %s' % (archive, iszip)
 
-	if iszip:
-		zf = zipfile.ZipFile(archive, 'r')
-		files = [ f for f in zf.namelist() if isvec(f) ]
-		zf.extractall(city, files)
-		process(files)
+		if iszip:
+			zf = zipfile.ZipFile(archive, 'r')
+			files = [ f for f in zf.namelist() if isvec(f) ]
+			city = '%s/%s' % (tmp, name)
+			shutil.rmtree(city)
+			os.mkdir(city)
+			zf.extractall(city, files)
+			process(name, files)
 
 def convert(fi, fo):
 	fo.write('<svg xmlns="http://www.w3.org/2000/svg" version="1.1">\n')
@@ -43,12 +60,17 @@ def convert(fi, fo):
 	fo.write('</g>\n')
 	fo.write('</svg>\n')
 
-def process(files):
+def process(city, files):
+	path = '%s/%s' % (dest, city)
+	shutil.rmtree(path)
+	os.mkdir(path)
+
 	for fname in files:
-		inp = '%s/%s' % (city, fname)
-		out = '%s/%s' % (city, name(fname))
-		print 'Input: %s Output: %s\n' % (inp, out)
+		inp = '%s/%s/%s' % (tmp, city, fname)
+		out = '%s/%s/%s' % (dest, city, name(fname))
+		print 'Input: %s Output: %s' % (inp, out)
 		convert(inp, out)
+	print
 
 def isvec(f):
 	(name, ext) = f.split('.')
