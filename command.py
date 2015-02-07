@@ -159,42 +159,57 @@ class TextOutCommand(Command):
 
 class RailwayCommand(Command):
 	def execute(self):
-		if len(self.params) > 7:
-			return # disabled for Peterburg/Avtovo
-
 		self.adapter.pencolor('0')
 		w1 = self.params[0]
 		w2 = self.params[1]
 		t = self.params[2]
-		(x1, y1, x2, y2) = self.params[3:7]
-		(ry, rx) = translate(int(x1), int(y1), int(x2), int(y2), int(w1) / 2)
+		params = self.params[3:]
 
-		xb = int(x1) + rx
-		yb = int(y1) - ry
-		xe = int(x2) + rx
-		ye = int(y2) - ry
-		self.adapter.line(xb, yb, xe, ye)
+		points = []
+		for i in range(len(params)):
+			if i % 2 == 0:
+				x = params[i]
+			else:
+				y = params[i]
+				points.append((x, y))
 
-		xb = int(x1) - rx
-		yb = int(y1) + ry
-		xe = int(x2) - rx
-		ye = int(y2) + ry
-		self.adapter.line(xb, yb, xe, ye)
+		p1 = points[0]
+		for p2 in points[1:]:
+			self.part(w1, w2, t, p1, p2)
+			p1 = p2
 
-		(sy, sx) = translate(int(x1), int(y1), int(x2), int(y2), int(w2) / 2)
-		sx1 = int(x1) + sx
-		sy1 = int(y1) - sy
-		sx2 = int(x1) - sx
-		sy2 = int(y1) + sy
-		sx3 = int(x2) + sx
-		sy3 = int(y2) - sy
+	def part(self, w1, w2, t, p1, p2):
+		(x1, y1) = p1
+		(x2, y2) = p2
+
+		(ry, rx) = translate(int(x1), int(y1), int(x2), int(y2), int(w1))
+
+		xb1 = int(x1)
+		yb1 = int(y1)
+		xe1 = int(x2)
+		ye1 = int(y2)
+		self.adapter.line(xb1, yb1, xe1, ye1)
+
+		xb2 = int(x1) - rx
+		yb2 = int(y1) + ry
+		xe2 = int(x2) - rx
+		ye2 = int(y2) + ry
+		self.adapter.line(xb2, yb2, xe2, ye2)
+
+		(sx, sy) = translate(xb1, yb1, xb2, yb2, (int(w2) - int(w1)) / 2)
+		sx1 = int(xb1) - sx
+		sy1 = int(yb1) - sy
+		sx2 = int(xb2) + sx
+		sy2 = int(yb2) + sy
+		sx3 = int(xe1) - sx
+		sy3 = int(ye1) - sy
 
 		(tx, ty) = translate(sx1, sy1, sx3, sy3, int(t))
-		xb = sx1 + tx
-		yb = sy1 + ty
-		xe = sx2 + tx
-		ye = sy2 + ty
-		while not iscrossed(xb, tx, sx3 - tx) and not iscrossed(yb, ty, sy3 - ty):
+		xb = sx1 + tx / 2
+		yb = sy1 + ty / 2
+		xe = sx2 + tx / 2
+		ye = sy2 + ty / 2
+		while not iscrossed(xb, tx, sx3 - tx / 2) and not iscrossed(yb, ty, sy3 - ty / 2):
 			self.adapter.line(xb, yb, xe, ye)
 			xb += tx
 			yb += ty
