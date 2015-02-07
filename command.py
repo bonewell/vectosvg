@@ -8,10 +8,12 @@ def translate(x1, y1, x2, y2, t):
 	dx = x2 - x1
 	dy = y2 - y1
 	if dx == 0:
+		z = -1 if dy < 0 else 1
 		tx = 0
-		ty = t * (dy / dy) * -1 # Oy is top to bottom
+		ty = t * z
 	elif dy == 0:
-		tx = t * (dx / dx)
+		z = -1 if dx < 0 else 1
+		tx = t * z
 		ty = 0
 	else:
 		a = math.atan2(dx, dy)
@@ -109,8 +111,14 @@ class SplineCommand(Command):
 
 class ArrowCommand(Command):
 	def execute(self):
-		(x1, y1, x2, y2) = self.params[:4]
-		self.adapter.arrow(x1, y1, x2, y2)
+		points = []
+		for i in range(len(self.params)):
+			if i % 2 == 0:
+				x = self.params[i]
+			else:
+				y = self.params[i]
+				points.append((x, y))
+		self.adapter.arrow(points)
 
 class StairsCommand(Command):
 	def execute(self):
@@ -135,6 +143,7 @@ class AngleTextOutCommand(Command):
 		size = self.params[2]
 		(x, y) = self.params[3:5]
 		text = self.params[5].strip()
+		text = text.replace(r'\n', ' ')
 		text = text.decode('windows-1251').encode('UTF-8')
 		self.adapter.text(x, y, text, size, font, float(a))
 
@@ -144,24 +153,63 @@ class TextOutCommand(Command):
 		size = self.params[1]
 		(x, y) = self.params[2:4]
 		text = self.params[4].strip()
+		text = text.replace(r'\n', ' ')
 		text = text.decode('windows-1251').encode('UTF-8')
 		self.adapter.text(x, y, text, size, font, 0)
 
 class RailwayCommand(Command):
 	def execute(self):
-		(x1, y1, x2, y2) = self.params[:4]
-		if len(self.params) > 4:
-			(x1, y1, x2, y2, x3, y3) = self.params[:6]
-		else:
-			x3 = 0
-			y3 = 0
-		t = 4
-		(tx, ty) = translate(int(x1), int(y1), int(x3), int(y3), t)
-		xb = int(x1)
-		yb = int(y1)
-		xe = int(x2)
-		ye = int(y2)
-		while not iscrossed(xb, tx, int(x3)) and not iscrossed(yb, ty, int(y3)):
+		self.adapter.pencolor('0')
+		w1 = self.params[0]
+		w2 = self.params[1]
+		t = self.params[2]
+		params = self.params[3:]
+
+		points = []
+		for i in range(len(params)):
+			if i % 2 == 0:
+				x = params[i]
+			else:
+				y = params[i]
+				points.append((x, y))
+
+		p1 = points[0]
+		for p2 in points[1:]:
+			self.part(w1, w2, t, p1, p2)
+			p1 = p2
+
+	def part(self, w1, w2, t, p1, p2):
+		(x1, y1) = p1
+		(x2, y2) = p2
+
+		(ry, rx) = translate(int(x1), int(y1), int(x2), int(y2), int(w1))
+
+		xb1 = int(x1)
+		yb1 = int(y1)
+		xe1 = int(x2)
+		ye1 = int(y2)
+		self.adapter.line(xb1, yb1, xe1, ye1)
+
+		xb2 = int(x1) - rx
+		yb2 = int(y1) + ry
+		xe2 = int(x2) - rx
+		ye2 = int(y2) + ry
+		self.adapter.line(xb2, yb2, xe2, ye2)
+
+		(sx, sy) = translate(xb1, yb1, xb2, yb2, (int(w2) - int(w1)) / 2)
+		sx1 = int(xb1) - sx
+		sy1 = int(yb1) - sy
+		sx2 = int(xb2) + sx
+		sy2 = int(yb2) + sy
+		sx3 = int(xe1) - sx
+		sy3 = int(ye1) - sy
+
+		(tx, ty) = translate(sx1, sy1, sx3, sy3, int(t))
+		xb = sx1 + tx / 2
+		yb = sy1 + ty / 2
+		xe = sx2 + tx / 2
+		ye = sy2 + ty / 2
+		while not iscrossed(xb, tx, sx3 - tx / 2) and not iscrossed(yb, ty, sy3 - ty / 2):
 			self.adapter.line(xb, yb, xe, ye)
 			xb += tx
 			yb += ty

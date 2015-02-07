@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
 import cgi
+import math
 from adapter import AdapterInterface
 
 class SvgAdapter(AdapterInterface):
 	def __init__(self, filename):
 		self.f = open(filename, 'w')
+		self.sc = 0
+		self.ac = 0
 		self.stroke = '000000'
 		self.fill = 'none'
 		self.opacity = 1.0
@@ -15,8 +18,10 @@ class SvgAdapter(AdapterInterface):
 		self.startgroup()
 
 	def __del__(self):
-		self.endgroup()
-		self.endgroup()
+		for x in range(0, self.ac):
+			self.endgroup()
+		if self.sc:
+			self.endgroup()
 		self.endgroup()
 		self.tail()
 		self.f.close()
@@ -59,19 +64,20 @@ class SvgAdapter(AdapterInterface):
 			self.newgroup = False
 
 	def size(self, w, h):
+		self.sc += 1
 		self.cx = int(w)/2
 		self.cy = int(h)/2
 		self.rect(0, 0, w, h)
-
-	def rotate(self, a):
-		self.a = float(a) * -1
-		self.root()
 		self.startgroup()
 
-	def root(self):
+	def rotate(self, a):
+		self.ac += 1
+		self.a = float(a) * -1
+		self.endgroup()
 		templ = '<g transform="rotate(%s %s %s)" >'
 		data = templ % (self.a, self.cx, self.cy)
 		self.write(data)
+		self.startgroup()
 
 	def pencolor(self, color):
 		self.stroke = color
@@ -124,7 +130,7 @@ class SvgAdapter(AdapterInterface):
 		cx = int(x1) + rx
 		cy = int(y1) + ry
 		templ = '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" />'
-		data = templ % (cx, cy, rx, ry)
+		data = templ % (cx, cy, math.fabs(rx), math.fabs(ry))
 		self.write(data)
 
 	def spline(self, points):
@@ -138,17 +144,21 @@ class SvgAdapter(AdapterInterface):
 		data = templ % text
 		self.write(data)
 
-	def arrow(self, x1, y1, x2, y2):
+	def arrow(self, points):
 		self.group()
-		templ = '<line x1="%s" y1="%s" x2="%s" y2="%s" marker-end="url(#arrow)" stroke-width="1" />'
-		data = templ % (x1, y1, x2, y2)
+		polyline = []
+		for p in points:
+			polyline.append('%s,%s' % p[:2])
+		text = ' '.join(polyline)
+		templ = '<polyline points="%s" marker-end="url(#arrow)" stroke-width="1" fill="none" />'
+		data = templ % text
 		self.write(data)
 
 	def rect(self, x1, y1, x2, y2):
 		self.group()
 		w = int(x2) - int(x1)
 		h = int(y2) - int(y1)
-		templ = '<rect x="%s" y="%s" width="%s" height="%s" stroke-width="1" fill="white" />'
+		templ = '<rect x="%s" y="%s" width="%s" height="%s" stroke-width="0" fill="none" />'
 		data = templ % (x1, y1, w, h)
 		self.write(data)
 
