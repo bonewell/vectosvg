@@ -151,34 +151,35 @@ class TextOutCommand(Command):
 
 class RailwayCommand(Command):
 	def execute(self):
+		if len(self.params) > 7:
+			return # disabled for Peterburg/Avtovo
+
+		self.adapter.pencolor('0')
 		w1 = self.params[0]
 		w2 = self.params[1]
 		t = self.params[2]
 		(x1, y1, x2, y2) = self.params[3:7]
 		(ry, rx) = translate(int(x1), int(y1), int(x2), int(y2), int(w1) / 2)
+
 		xb = int(x1) + rx
-		yb = int(y1) + ry
+		yb = int(y1) - ry
 		xe = int(x2) + rx
-		ye = int(y2) + ry
-		self.adapter.line(xb, yb, xe, yb)
+		ye = int(y2) - ry
+		self.adapter.line(xb, yb, xe, ye)
 
 		xb = int(x1) - rx
-		yb = int(y1) - ry
+		yb = int(y1) + ry
 		xe = int(x2) - rx
-		ye = int(y2) - ry
-		self.adapter.line(xb, yb, xe, yb)
-		#if len(self.params) > 4:
-		#	(x1, y1, x2, y2, x3, y3) = self.params[:6]
-		#else:
-		#	x3 = 0
-		#	y3 = 0
+		ye = int(y2) + ry
+		self.adapter.line(xb, yb, xe, ye)
+
 		(sy, sx) = translate(int(x1), int(y1), int(x2), int(y2), int(w2) / 2)
 		sx1 = int(x1) + sx
-		sy1 = int(y1) + sy
+		sy1 = int(y1) - sy
 		sx2 = int(x1) - sx
-		sy2 = int(y1) - sy
+		sy2 = int(y1) + sy
 		sx3 = int(x2) + sx
-		sy3 = int(y2) + sy
+		sy3 = int(y2) - sy
 
 		(tx, ty) = translate(sx1, sy1, sx3, sy3, int(t))
 		xb = sx1 + tx

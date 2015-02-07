@@ -7,6 +7,8 @@ from adapter import AdapterInterface
 class SvgAdapter(AdapterInterface):
 	def __init__(self, filename):
 		self.f = open(filename, 'w')
+		self.sc = 0
+		self.ac = 0
 		self.stroke = '000000'
 		self.fill = 'none'
 		self.opacity = 1.0
@@ -16,8 +18,10 @@ class SvgAdapter(AdapterInterface):
 		self.startgroup()
 
 	def __del__(self):
-		self.endgroup()
-		self.endgroup()
+		for x in range(0, self.ac):
+			self.endgroup()
+		if self.sc:
+			self.endgroup()
 		self.endgroup()
 		self.tail()
 		self.f.close()
@@ -60,19 +64,20 @@ class SvgAdapter(AdapterInterface):
 			self.newgroup = False
 
 	def size(self, w, h):
+		self.sc += 1
 		self.cx = int(w)/2
 		self.cy = int(h)/2
 		self.rect(0, 0, w, h)
-
-	def rotate(self, a):
-		self.a = float(a) * -1
-		self.root()
 		self.startgroup()
 
-	def root(self):
+	def rotate(self, a):
+		self.ac += 1
+		self.a = float(a) * -1
+		self.endgroup()
 		templ = '<g transform="rotate(%s %s %s)" >'
 		data = templ % (self.a, self.cx, self.cy)
 		self.write(data)
+		self.startgroup()
 
 	def pencolor(self, color):
 		self.stroke = color
