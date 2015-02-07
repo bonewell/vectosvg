@@ -111,8 +111,14 @@ class SplineCommand(Command):
 
 class ArrowCommand(Command):
 	def execute(self):
-		(x1, y1, x2, y2) = self.params[:4]
-		self.adapter.arrow(x1, y1, x2, y2)
+		points = []
+		for i in range(len(self.params)):
+			if i % 2 == 0:
+				x = self.params[i]
+			else:
+				y = self.params[i]
+				points.append((x, y))
+		self.adapter.arrow(points)
 
 class StairsCommand(Command):
 	def execute(self):
@@ -137,6 +143,7 @@ class AngleTextOutCommand(Command):
 		size = self.params[2]
 		(x, y) = self.params[3:5]
 		text = self.params[5].strip()
+		text = text.replace(r'\n', ' ')
 		text = text.decode('windows-1251').encode('UTF-8')
 		self.adapter.text(x, y, text, size, font, float(a))
 
@@ -146,6 +153,7 @@ class TextOutCommand(Command):
 		size = self.params[1]
 		(x, y) = self.params[2:4]
 		text = self.params[4].strip()
+		text = text.replace(r'\n', ' ')
 		text = text.decode('windows-1251').encode('UTF-8')
 		self.adapter.text(x, y, text, size, font, 0)
 

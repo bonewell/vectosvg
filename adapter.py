@@ -31,7 +31,7 @@ class AdapterInterface:
 	def spline(self, points):
 		pass
 
-	def arrow(self, x1, y1, x2, y2):
+	def arrow(self, points):
 		pass
 
 	def rect(self, x1, y1, x2, y2):

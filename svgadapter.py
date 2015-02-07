@@ -144,17 +144,21 @@ class SvgAdapter(AdapterInterface):
 		data = templ % text
 		self.write(data)
 
-	def arrow(self, x1, y1, x2, y2):
+	def arrow(self, points):
 		self.group()
-		templ = '<line x1="%s" y1="%s" x2="%s" y2="%s" marker-end="url(#arrow)" stroke-width="1" />'
-		data = templ % (x1, y1, x2, y2)
+		polyline = []
+		for p in points:
+			polyline.append('%s,%s' % p[:2])
+		text = ' '.join(polyline)
+		templ = '<polyline points="%s" marker-end="url(#arrow)" stroke-width="1" fill="none" />'
+		data = templ % text
 		self.write(data)
 
 	def rect(self, x1, y1, x2, y2):
 		self.group()
 		w = int(x2) - int(x1)
 		h = int(y2) - int(y1)
-		templ = '<rect x="%s" y="%s" width="%s" height="%s" stroke-width="1" fill="white" />'
+		templ = '<rect x="%s" y="%s" width="%s" height="%s" stroke-width="0" fill="none" />'
 		data = templ % (x1, y1, w, h)
 		self.write(data)
 
