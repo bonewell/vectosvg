@@ -19,7 +19,7 @@ class AdapterInterface:
 	def line(self, x1, y1, x2, y2):
 		pass
 
-	def polyline(self, points):
+	def polyline(self, points, w, dashed=False):
 		pass
 
 	def polygon(self, points):

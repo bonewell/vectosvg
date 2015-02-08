@@ -59,6 +59,7 @@ class BrushColorCommand(Command):
 class OpaqueCommand(Command):
 	def execute(self):
 		self.adapter.opaque(self.params[0])
+		self.adapter.pencolor(0)
 
 class LineCommand(Command):
 	def execute(self):
@@ -69,7 +70,8 @@ class LineCommand(Command):
 			else:
 				y = self.params[i]
 				points.append((x, y))
-		self.adapter.polyline(points)
+		w = 1 if (len(self.params) % 2) == 0 else self.params[-1]
+		self.adapter.polyline(points, w)
 
 class DashedCommand(Command):
 	def execute(self):
@@ -80,7 +82,8 @@ class DashedCommand(Command):
 			else:
 				y = self.params[i]
 				points.append((x, y))
-		self.adapter.polyline(points, True)
+		w = 1 if (len(self.params) % 2) == 0 else self.params[-1]
+		self.adapter.polyline(points, w, True)
 
 class PolygonCommand(Command):
 	def execute(self):

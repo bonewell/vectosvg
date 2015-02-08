@@ -100,7 +100,7 @@ class SvgAdapter(AdapterInterface):
 		data = templ % (x1, y1, x2, y2)
 		self.write(data)
 
-	def polyline(self, points, dashed=False):
+	def polyline(self, points, w, dashed=False):
 		self.group()
 		polyline = []
 		for p in points:
@@ -109,8 +109,8 @@ class SvgAdapter(AdapterInterface):
 		dasharray = ''
 		if dashed:
 			dasharray = 'stroke-dasharray="5,2"'
-		templ = '<polyline points="%s" stroke-width="1" fill="none" %s />'
-		data = templ % (text, dasharray)
+		templ = '<polyline points="%s" stroke-width="%s" fill="none" %s />'
+		data = templ % (text, w, dasharray)
 		self.write(data)
 
 	def polygon(self, points):
