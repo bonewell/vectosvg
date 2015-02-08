@@ -110,7 +110,8 @@ class SplineCommand(Command):
 			else:
 				y = self.params[i]
 				points.append((x, y))
-		self.adapter.spline(points)
+		w = 1 if (len(self.params) % 2) == 0 else self.params[-1]
+		self.adapter.spline(points, w)
 
 class ArrowCommand(Command):
 	def execute(self):
@@ -145,7 +146,10 @@ class AngleTextOutCommand(Command):
 		font = self.params[1].strip()
 		size = self.params[2]
 		(x, y) = self.params[3:5]
-		text = self.params[5].strip()
+		if len(self.params) > 5:
+			text = self.params[5].strip()
+		else:
+			text = ''
 		text = text.replace(r'\n', ' ')
 		text = text.decode('windows-1251').encode('UTF-8')
 		self.adapter.text(x, y, text, size, font, float(a))

@@ -63,7 +63,7 @@ class VecIterator(IteratorInterface):
 
 		print line
 
-		tokens = line.strip().split(' ')
+		tokens = line.strip().strip(',').split(' ')
 		if not tokens:
 			return self.next()
 

@@ -133,15 +133,15 @@ class SvgAdapter(AdapterInterface):
 		data = templ % (cx, cy, math.fabs(rx), math.fabs(ry))
 		self.write(data)
 
-	def spline(self, points):
+	def spline(self, points, w):
 		self.group()
 		polyline = []
 		for p in points:
 			polyline.append('%s,%s' % p[:2])
 		text = ' '.join(polyline)
 		templ = '<path d="%s" stroke-width="1" />'
-		templ = '<polyline points="%s" stroke-width="1" fill="none"/> <!-- spline -->'
-		data = templ % text
+		templ = '<polyline points="%s" stroke-width="%s" fill="none"/> <!-- spline -->'
+		data = templ % (text, w)
 		self.write(data)
 
 	def arrow(self, points):

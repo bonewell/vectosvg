@@ -28,7 +28,7 @@ class AdapterInterface:
 	def ellipse(self, x1, y1, x2, y2):
 		pass
 
-	def spline(self, points):
+	def spline(self, points, w):
 		pass
 
 	def arrow(self, points):
