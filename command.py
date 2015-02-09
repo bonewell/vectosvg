@@ -203,20 +203,22 @@ class RailwayCommand(Command):
 		ye2 = int(y2) + ry
 		self.adapter.line(xb2, yb2, xe2, ye2)
 
-		(sx, sy) = translate(xb1, yb1, xb2, yb2, (int(w2) - int(w1)) / 2)
-		sx1 = int(xb1) - sx
+		(sy, sx) = translate(xb1, yb1, xe1, ye1, math.fabs(int(w2) - int(w1)) / 2)
+		sx1 = int(xb1) + sx
 		sy1 = int(yb1) - sy
-		sx2 = int(xb2) + sx
-		sy2 = int(yb2) + sy
-		sx3 = int(xe1) - sx
+		(ssy, ssx) = translate(xb1, yb1, xe1, ye1, int(w1) + math.fabs(int(w2) - int(w1)) / 2)
+		sx2 = int(xb1) - ssx
+		sy2 = int(yb1) + ssy
+		sx3 = int(xe1) + sx
 		sy3 = int(ye1) - sy
 
 		(tx, ty) = translate(sx1, sy1, sx3, sy3, int(t))
-		xb = sx1 + tx / 2
-		yb = sy1 + ty / 2
-		xe = sx2 + tx / 2
-		ye = sy2 + ty / 2
-		while not iscrossed(xb, tx, sx3 - tx / 2) and not iscrossed(yb, ty, sy3 - ty / 2):
+		(txp, typ) = translate(sx1, sy1, sx3, sy3, int(t) / 2)
+		xb = sx1 + txp
+		yb = sy1 + typ
+		xe = sx2 + txp
+		ye = sy2 + typ
+		while not iscrossed(xb, tx, sx3) and not iscrossed(yb, ty, sy3):
 			self.adapter.line(xb, yb, xe, ye)
 			xb += tx
 			yb += ty
