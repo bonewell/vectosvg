@@ -50,7 +50,7 @@ class SvgAdapter(AdapterInterface):
 		self.write(data)
 
 	def startgroup(self):
-		data = '<g stroke="#%s" fill="%s" fill-opacity="%s">' % (self.stroke, self.fill, self.opacity)
+		data = '<g stroke="#%s" fill="%s" stroke-opacity="%s" fill-opacity="%s">' % (self.stroke, self.fill, self.opacity, self.opacity)
 		self.write(data)
 
 	def endgroup(self):
