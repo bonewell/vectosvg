@@ -35,7 +35,6 @@ def main():
 
 def run(archive, name):
 		iszip = zipfile.is_zipfile(archive)
-		print 'File \'%s\' is corect: %s' % (archive, iszip)
 
 		if iszip:
 			zf = zipfile.ZipFile(archive, 'r')
@@ -44,6 +43,8 @@ def run(archive, name):
 			os.mkdir(city)
 			zf.extractall(city, files)
 			process(name, files)
+		else:
+			print 'File \'%s\' is not corect' % archive
 
 def convert(fi, fo):
 	fo.write('<svg xmlns="http://www.w3.org/2000/svg" version="1.1">\n')
@@ -73,10 +74,11 @@ def process(city, files):
 	shutil.rmtree(path, True)
 	os.mkdir(path)
 
+	print 'City: %s' % city
 	for fname in files:
 		inp = '%s/%s/%s' % (tmp, city, fname)
 		out = '%s/%s/%s' % (dest, city, name(fname))
-		print 'Input: %s Output: %s' % (inp, out)
+		print 'Schema: %s' % fname.split('.')[0]
 		convert(inp, out)
 	print
 
