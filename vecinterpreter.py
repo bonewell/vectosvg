@@ -61,7 +61,7 @@ class VecIterator(IteratorInterface):
 		if not line:
 			return None # end file
 
-		print line
+#		print line
 
 		tokens = line.strip().strip(',').split(' ')
 		if not tokens:
