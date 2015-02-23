@@ -50,16 +50,23 @@ class AngleCommand(Command):
 class PenColorCommand(Command):
 	def execute(self):
 		if self.params:
-			self.adapter.pencolor(self.params[0])
+			color = self.params[0]
+			if not color or int(color, base=16) == 0:
+				color = '000000'
+			self.adapter.pencolor(color)
 
 class BrushColorCommand(Command):
 	def execute(self):
-		self.adapter.brushcolor(self.params[0])
+		if self.params:
+			color = self.params[0]
+			if not color or int(color, base=16) == 0:
+				color = '000000'
+			self.adapter.brushcolor(color)
 
 class OpaqueCommand(Command):
 	def execute(self):
 		self.adapter.opaque(self.params[0])
-		self.adapter.pencolor(0)
+		self.adapter.pencolor('000000')
 
 class LineCommand(Command):
 	def execute(self):
@@ -166,7 +173,7 @@ class TextOutCommand(Command):
 
 class RailwayCommand(Command):
 	def execute(self):
-		self.adapter.pencolor('0')
+		self.adapter.pencolor('000000')
 		w1 = self.params[0]
 		w2 = self.params[1]
 		t = self.params[2]

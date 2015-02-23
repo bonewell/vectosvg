@@ -2,36 +2,25 @@
 
 import cgi
 import math
+import svgwrite
 from adapter import AdapterInterface
 
 class SvgAdapter(AdapterInterface):
 	def __init__(self, filename):
-		self.f = open(filename, 'w')
+		self.image = svgwrite.Drawing(filename, profile='tiny')
 		self.sc = 0
 		self.ac = 0
-		self.stroke = '000000'
-		self.fill = 'none'
+		self.stroke = self.color('000000')
+		self.fill = self.color('-1')
 		self.opacity = 1.0
-		self.newgroup = False
-		self.head()
 		self.defs()
-		self.startgroup()
 
 	def __del__(self):
-		for x in range(0, self.ac):
-			self.endgroup()
-		if self.sc:
-			self.endgroup()
-		self.endgroup()
-		self.tail()
-		self.f.close()
+		self.image.save()
 
 	def write(self, data):
-		self.f.write('%s\n' % data)
-
-	def head(self):
-		data = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">'
-		self.write(data)
+		pass
+		#self.f.write('%s\n' % data)
 
 	def defs(self):
 		data = """<defs>
@@ -45,50 +34,30 @@ class SvgAdapter(AdapterInterface):
   </defs>"""
 		self.write(data)
 
-	def tail(self):
-		data = '</svg>'
-		self.write(data)
-
-	def startgroup(self):
-		data = '<g stroke="#%s" fill="%s" stroke-opacity="%s" fill-opacity="%s">' % (self.stroke, self.fill, self.opacity, self.opacity)
-		self.write(data)
-
-	def endgroup(self):
-		data = '</g>'
-		self.write(data)
-
 	def group(self):
-		if self.newgroup == True:
-			self.endgroup()
-			self.startgroup()
-			self.newgroup = False
+		return self.image.add(self.image.g())
 
 	def size(self, w, h):
 		self.sc += 1
 		self.cx = int(w)/2
 		self.cy = int(h)/2
 		self.rect(0, 0, w, h)
-		self.startgroup()
 
 	def rotate(self, a):
 		self.ac += 1
 		self.a = float(a) * -1
-		self.endgroup()
 		templ = '<g transform="rotate(%s %s %s)" >'
 		data = templ % (self.a, self.cx, self.cy)
 		self.write(data)
-		self.startgroup()
+
+	def color(self, color):
+		return 'none' if color == '-1' else '#%s' % color
 
 	def pencolor(self, color):
-		self.stroke = color
-		self.newgroup = True
+		self.stroke = self.color(color)
 
 	def brushcolor(self, color):
-		if color == '-1':
-			self.fill = 'none'
-		else:
-			self.fill = '#%s' % color
-		self.newgroup = True
+		self.fill = self.color(color)
 
 	def opaque(self, v):
 		self.opacity = float(v) / 100
@@ -101,27 +70,14 @@ class SvgAdapter(AdapterInterface):
 		self.write(data)
 
 	def polyline(self, points, w, dashed=False):
-		self.group()
-		polyline = []
-		for p in points:
-			polyline.append('%s,%s' % p[:2])
-		text = ' '.join(polyline)
-		dasharray = ''
+		polyline = self.image.add(self.image.polyline(points))
+		polyline.fill('none').stroke(self.stroke, width=w)
 		if dashed:
-			dasharray = 'stroke-dasharray="5,2"'
-		templ = '<polyline points="%s" stroke-width="%s" fill="none" %s />'
-		data = templ % (text, w, dasharray)
-		self.write(data)
+			polyline.dasharray([5, 2])
 
 	def polygon(self, points):
-		self.group()
-		polygon = []
-		for p in points:
-			polygon.append('%s,%s' % p[:2])
-		text = ' '.join(polygon)
-		templ = '<polygon points="%s" stroke-width="1" />'
-		data = templ % text
-		self.write(data)
+		polygon = self.image.add(self.image.polygon(points))
+		polygon.fill(self.fill).stroke(self.stroke, width=1)
 
 	def ellipse(self, x1, y1, x2, y2):
 		self.group()
