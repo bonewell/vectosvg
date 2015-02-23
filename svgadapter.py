@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import cgi
 import math
 import svgwrite
 from adapter import AdapterInterface
@@ -13,6 +12,7 @@ class SvgAdapter(AdapterInterface):
 		self.opacity = 1.0
 		self.defs()
 		self.root = self.image.add(self.image.g())
+		self.current = self.root
 
 	def __del__(self):
 		self.image.save()
@@ -43,19 +43,21 @@ class SvgAdapter(AdapterInterface):
 
 	def opaque(self, v):
 		self.opacity = float(v) / 100
+		self.current = self.root.add(self.image.g())
+		self.current.fill(self.fill, opacity=self.opacity).stroke(self.stroke, opacity=self.opacity)
 
 	def line(self, x1, y1, x2, y2):
-		line = self.root.add(self.image.line((x1, y1), (x2, y2)))
+		line = self.current.add(self.image.line((x1, y1), (x2, y2)))
 		line.stroke(self.stroke, width=1)
 
 	def polyline(self, points, w, dashed=False):
-		polyline = self.root.add(self.image.polyline(points))
+		polyline = self.current.add(self.image.polyline(points))
 		polyline.fill('none').stroke(self.stroke, width=w)
 		if dashed:
 			polyline.dasharray([5, 2])
 
 	def polygon(self, points):
-		polygon = self.root.add(self.image.polygon(points))
+		polygon = self.current.add(self.image.polygon(points))
 		polygon.fill(self.fill).stroke(self.stroke, width=1)
 
 	def ellipse(self, x1, y1, x2, y2):
@@ -63,29 +65,29 @@ class SvgAdapter(AdapterInterface):
 		ry = (int(y2) - int(y1)) / 2
 		cx = int(x1) + rx
 		cy = int(y1) + ry
-		ellipse = self.root.add(self.image.ellipse((cx, cy), (math.fabs(rx), math.fabs(ry))))
+		ellipse = self.current.add(self.image.ellipse((cx, cy), (math.fabs(rx), math.fabs(ry))))
 		ellipse.fill(self.fill).stroke(self.stroke, width=1)
 
 	def spline(self, points, w):
-		polyline = self.root.add(self.image.polyline(points))
+		polyline = self.current.add(self.image.polyline(points))
 		polyline.fill('none').stroke(self.stroke, width=w)
 
 	def arrow(self, points):
-		polyline = self.root.add(self.image.polyline(points))
+		polyline = self.current.add(self.image.polyline(points))
 		polyline.fill('none').stroke(self.stroke, width=1)
 		polyline['marker-end'] = self.marker.get_funciri()
 
 	def rect(self, x1, y1, x2, y2):
 		w = int(x2) - int(x1)
 		h = int(y2) - int(y1)
-		rect = self.root.add(self.image.rect((x1, y1), (w, h)))
+		rect = self.current.add(self.image.rect((x1, y1), (w, h)))
 		rect.fill('none').stroke('none', width=0)
 
 	def text(self, x, y, text, size, font, a):
-		if not a:
-			templ = '<text x="%s" y="%s" font-family="%s" font-size="%s" fill="#%s" stroke-width="0">%s</text>'
-			data = templ % (x, float(y) + float(size), font, size, self.stroke, cgi.escape(text))
-		else:
-			a *= -1
-			templ = '<text x="%s" y="%s" font-family="%s" font-size="%s" fill="#%s" transform="rotate(%s %s %s)" stroke-width="0">%s</text>'
-			data = templ % (x, float(y) + float(size), font, size, self.stroke, a, x, y, cgi.escape(text))
+		insert = (x, float(y) + float(size))
+		txt = self.current.add(self.image.text(text, insert))
+		txt.fill(self.stroke).stroke('none', width=0)
+		txt['font-family'] = font
+		txt['font-size'] = size
+		if a:
+			txt.rotate(a * -1, (x, y))
