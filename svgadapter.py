@@ -7,13 +7,13 @@ from adapter import AdapterInterface
 
 class SvgAdapter(AdapterInterface):
 	def __init__(self, filename):
-		self.image = svgwrite.Drawing(filename, profile='tiny')
+		self.image = svgwrite.Drawing(filename, profile='full')
 		self.sc = 0
 		self.ac = 0
 		self.stroke = self.color('000000')
 		self.fill = self.color('-1')
 		self.opacity = 1.0
-		self.defs()
+#		self.defs()
 
 	def __del__(self):
 		self.image.save()
@@ -23,16 +23,19 @@ class SvgAdapter(AdapterInterface):
 		#self.f.write('%s\n' % data)
 
 	def defs(self):
-		data = """<defs>
-    <marker id="arrow"
-      viewBox="0 0 10 10" refX="0" refY="5"
-      markerUnits="strokeWidth"
-      markerWidth="4" markerHeight="3"
-      orient="auto">
-      <path d="M 0 0 L 10 5 L 0 10 z" />
-    </marker>
-  </defs>"""
-		self.write(data)
+		pass
+		#self.arrow = self.image.marker((0, 5), (4, 3))
+		#self.arrow.add(self.image.circle((0, 0), r=5))
+		#self.image.defs.add(self.arrow)
+#<defs>
+#    <marker id="arrow"
+#      viewBox="0 0 10 10" refX="0" refY="5"
+#      markerUnits="strokeWidth"
+#      markerWidth="4" markerHeight="3"
+#      orient="auto">
+#      <path d="M 0 0 L 10 5 L 0 10 z" />
+#    </marker>
+#</defs>
 
 	def group(self):
 		return self.image.add(self.image.g())
@@ -64,10 +67,8 @@ class SvgAdapter(AdapterInterface):
 		self.newgroup = True
 
 	def line(self, x1, y1, x2, y2):
-		self.group()
-		templ = '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke-width="1" />'
-		data = templ % (x1, y1, x2, y2)
-		self.write(data)
+		line = self.image.add(self.image.line((x1, y1), (x2, y2)))
+		line.stroke(self.stroke, width=1)
 
 	def polyline(self, points, w, dashed=False):
 		polyline = self.image.add(self.image.polyline(points))
@@ -80,43 +81,28 @@ class SvgAdapter(AdapterInterface):
 		polygon.fill(self.fill).stroke(self.stroke, width=1)
 
 	def ellipse(self, x1, y1, x2, y2):
-		self.group()
 		rx = (int(x2) - int(x1)) / 2
 		ry = (int(y2) - int(y1)) / 2
 		cx = int(x1) + rx
 		cy = int(y1) + ry
-		templ = '<ellipse cx="%s" cy="%s" rx="%s" ry="%s" />'
-		data = templ % (cx, cy, math.fabs(rx), math.fabs(ry))
-		self.write(data)
+
+		ellipse = self.image.add(self.image.ellipse((cx, cy), (math.fabs(rx), math.fabs(ry))))
+		ellipse.fill(self.fill).stroke(self.stroke, width=1)
 
 	def spline(self, points, w):
-		self.group()
-		polyline = []
-		for p in points:
-			polyline.append('%s,%s' % p[:2])
-		text = ' '.join(polyline)
-		templ = '<path d="%s" stroke-width="1" />'
-		templ = '<polyline points="%s" stroke-width="%s" fill="none"/> <!-- spline -->'
-		data = templ % (text, w)
-		self.write(data)
+		polyline = self.image.add(self.image.polyline(points))
+		polyline.fill('none').stroke(self.stroke, width=w)
 
 	def arrow(self, points):
-		self.group()
-		polyline = []
-		for p in points:
-			polyline.append('%s,%s' % p[:2])
-		text = ' '.join(polyline)
-		templ = '<polyline points="%s" marker-end="url(#arrow)" stroke-width="1" fill="none" />'
-		data = templ % text
-		self.write(data)
+		polyline = self.image.add(self.image.polyline(points))
+		polyline.fill('none').stroke(self.stroke, width=1)
+#		polyline.set_markers(self.arrow)
 
 	def rect(self, x1, y1, x2, y2):
-		self.group()
 		w = int(x2) - int(x1)
 		h = int(y2) - int(y1)
-		templ = '<rect x="%s" y="%s" width="%s" height="%s" stroke-width="0" fill="none" />'
-		data = templ % (x1, y1, w, h)
-		self.write(data)
+		rect = self.image.add(self.image.rect((x1, y1), (w, h)))
+		rect.fill('none').stroke('none', width=0)
 
 	def text(self, x, y, text, size, font, a):
 		self.group()
