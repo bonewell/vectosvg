@@ -4,6 +4,28 @@ import math
 import svgwrite
 from adapter import AdapterInterface
 
+def diff((x1, y1), (x2, y2)):
+	dx = int(x2) - int(x1)
+	dy = int(y2) - int(y1)
+	return math.sqrt((dx * dx) + (dy * dy))
+
+def translate((x1, y1), (x2, y2), t):
+	dx = int(x2) - int(x1)
+	dy = int(y2) - int(y1)
+	if dx == 0:
+		z = -1 if dy < 0 else 1
+		tx = 0
+		ty = t * z
+	elif dy == 0:
+		z = -1 if dx < 0 else 1
+		tx = t * z
+		ty = 0
+	else:
+		a = math.atan2(dx, dy)
+		tx = t * math.sin(a)
+		ty = t * math.cos(a)
+	return (tx, ty)
+
 class SvgAdapter(AdapterInterface):
 	def __init__(self, filename):
 		self.image = svgwrite.Drawing(filename, profile='full')
@@ -69,8 +91,30 @@ class SvgAdapter(AdapterInterface):
 		ellipse.fill(self.fill).stroke(self.stroke, width=1)
 
 	def spline(self, points, w):
-		polyline = self.current.add(self.image.polyline(points))
-		polyline.fill('none').stroke(self.stroke, width=w)
+		b = points[0]
+		cpb = b
+		d = 'M%s,%s ' % b
+		for i in range(len(points[1:])):
+			e = points[i]
+			n = points[i+1]
+
+			delta = diff(b, n)
+			(tx, ty) = translate(b, n, delta/6)
+			(ex, ey) = e
+			cpex = (int(ex) - tx)
+			cpey = (int(ey) - ty)
+
+			d += 'C%s,%s %s,%s %s,%s ' % (cpb[0], cpb[1], cpex, cpey, ex, ey)
+
+			b = e
+			(bx, by) = b
+			cpb = ((int(bx) + tx), (int(by) + ty))
+		e = points[-1]
+		cpe = e
+		d += 'C%s,%s %s,%s %s,%s ' % (cpb[0], cpb[1], cpe[0], cpe[1], e[0], e[1])
+
+		spline = self.current.add(self.image.path(d))
+		spline.fill('none').stroke(self.stroke, width=w)
 
 	def arrow(self, points):
 		polyline = self.current.add(self.image.polyline(points))
