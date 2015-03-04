@@ -71,9 +71,14 @@ class VecIterator(IteratorInterface):
 		if not name or name[0] == ';':
 			return self.next()
 
-		params = ' '.join(tokens[1:]).split(',')
-		for p in params:
-			p.strip()
+		tail = tokens[1:]
+		if not tail or len(tail) == 0:
+			return self.next()
+
+		raw_params = ' '.join(tokens[1:]).split(',')
+		params = []
+		for p in raw_params:
+			params.append(p.strip())
 #		print 'Name: %s - %s' % (name, params)
 		cmd = self.container.command(name, params)
 		if cmd == None:
