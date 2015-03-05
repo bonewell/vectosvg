@@ -24,7 +24,7 @@ class City:
 	def unzip(self, tmp):
 		zf = zipfile.ZipFile(self.source, 'r')
 		files = [ f for f in zf.namelist() if self.is_vec(f) ]
-		directory = '%s/%s' % (tmp, self.name)
+		directory = os.path.join(tmp, self.name)
 		os.mkdir(directory)
 		zf.extractall(directory, files)
 

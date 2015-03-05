@@ -34,10 +34,16 @@ def main(source, dest):
 	shutil.rmtree(tmp)
 
 def process(city, tmp, dest):
+	print 'City: %s' % city.name
 	city.unzip(tmp)
+	path = os.path.join(dest, city.name)
+	shutil.rmtree(path, True)
+	os.mkdir(path)
+
 	for station in city.stations:
-		inp = '%s/%s/%s.vec' % (tmp, city.name, station)
-		out = '%s/%s/%s.svg' % (dest, city.name, station)
+		print 'Station: %s' % station
+		inp = os.path.join(tmp, '%s/%s.vec' % (city.name, station))
+		out = os.path.join(dest, '%s/%s.svg' % (city.name, station))
 		convert(inp, out)
 
 def convert(inp, out):
