@@ -3,69 +3,42 @@ import os
 import argparse
 import tempfile
 import shutil
-import zipfile
 
+from city import City
 from converter import Converter
 from vecinterpreter import VecInterpreter
 from svgadapter import SvgAdapter
 
 """This script converts vec files of pMetro to SVG"""
 
-def cities():
-	names = []
-	for dirpath, dirnames, filenames in os.walk(source):
-		for fname in filenames:
-			(name, ext) = os.path.splitext(fname)
-			if ext == '.pmz':
-				names.append(name)
-	return names
-
-def main():
+def cities(source):
+	cities = []
 	if os.path.isdir(source):
-		for name in cities():
-			archive = '%s/%s.pmz' % (source, name)
-			run(archive, name)
+		for dirpath, dirnames, filenames in os.walk(source):
+			for name in filenames:
+				if City.is_valid(os.path.join(dirpath, name)):
+					cities.append(City(dirpath, name))
+				else:
+					print 'File "%s/%s" is not pMetro format' % (dirpath, name)
 	else:
-		(path, ext) = os.path.splitext(source)
-		if ext == '.pmz':
-			name = os.path.split(path)[1]
-			run(source, name)
+		if City.is_valid(source):
+			cities.append(City(source))
 		else:
 			print 'File "%s" is not pMetro format' % source
+	return cities
 
-def run(archive, name):
-		iszip = zipfile.is_zipfile(archive)
+def main(source, dest):
+	tmp = tempfile.mkdtemp()
+	for city in cities(source):
+		process(city, tmp, dest)
+	shutil.rmtree(tmp)
 
-		if iszip:
-			zf = zipfile.ZipFile(archive, 'r')
-			files = [ f for f in zf.namelist() if isvec(f) ]
-			city = '%s/%s' % (tmp, name)
-			os.mkdir(city)
-			zf.extractall(city, files)
-			process(name, files)
-		else:
-			print 'File \'%s\' is not corect' % archive
-
-def process(city, files):
-	path = '%s/%s' % (dest, city)
-	shutil.rmtree(path, True)
-	os.mkdir(path)
-
-	print 'City: %s' % city
-	for fname in files:
-		inp = '%s/%s/%s' % (tmp, city, fname)
-		out = '%s/%s/%s' % (dest, city, name(fname))
-		print 'Schema: %s' % fname.split('.')[0]
+def process(city, tmp, dest):
+	city.unzip(tmp)
+	for station in city.stations:
+		inp = '%s/%s/%s.vec' % (tmp, city.name, station)
+		out = '%s/%s/%s.svg' % (dest, city.name, station)
 		convert(inp, out)
-	print
-
-def isvec(f):
-	(name, ext) = f.split('.')
-	return ext == 'vec'
-
-def name(f):
-	(name, ext) = f.split('.')
-	return '%s.svg' % name
 
 def convert(inp, out):
 	con = Converter()
@@ -78,10 +51,4 @@ parser.add_argument('source', help='Input directory which contains *.pmz files o
 parser.add_argument('dest', help='Output directory where will be saved SVG images')
 values = parser.parse_args()
 
-source = values.source
-dest = values.dest
-tmp = tempfile.mkdtemp()
-
-main()
-
-shutil.rmtree(tmp)
+main(values.source, values.dest)
