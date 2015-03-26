@@ -39,7 +39,6 @@ def process(city, tmp, dest):
 	path = os.path.join(dest, city.name)
 	shutil.rmtree(path, True)
 	os.mkdir(path)
-
 	for station in city.stations:
 		print 'Station: %s' % station
 		inp = os.path.join(tmp, '%s/%s.vec' % (city.name, station))

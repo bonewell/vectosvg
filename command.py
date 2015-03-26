@@ -231,5 +231,3 @@ class RailwayCommand(Command):
 			yb += ty
 			xe += tx
 			ye += ty
-
-
