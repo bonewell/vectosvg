@@ -2,8 +2,8 @@
 
 class InterpreterInterface:
 	def interpret(self):
-		pass
+		raise NotImplementedError()
 
 class IteratorInterface:
 	def next(self):
-		pass
+		raise NotImplementedError()

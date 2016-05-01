@@ -2,40 +2,40 @@
 
 class AdapterInterface:
 	def size(self, w, h):
-		pass
+		raise NotImplementedError()
 
 	def rotate(self, a):
-		pass
+		raise NotImplementedError()
 
 	def pencolor(self, color):
-		pass
+		raise NotImplementedError()
 
 	def brushcolor(self, color):
-		pass
+		raise NotImplementedError()
 
 	def opaque(self, v):
-		pass
+		raise NotImplementedError()
 
 	def line(self, x1, y1, x2, y2):
-		pass
+		raise NotImplementedError()
 
 	def polyline(self, points, w, dashed=False):
-		pass
+		raise NotImplementedError()
 
 	def polygon(self, points):
-		pass
+		raise NotImplementedError()
 
 	def ellipse(self, x1, y1, x2, y2):
-		pass
+		raise NotImplementedError()
 
 	def spline(self, points, w):
-		pass
+		raise NotImplementedError()
 
 	def arrow(self, points):
-		pass
+		raise NotImplementedError()
 
 	def rect(self, x1, y1, x2, y2):
-		pass
+		raise NotImplementedError()
 
 	def text(self, x, y, text, size, font, a):
-		pass
+		raise NotImplementedError()

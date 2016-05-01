@@ -2,24 +2,17 @@
 import os
 import zipfile
 
-class City:
-	def __init__(self, dirpath, filename=None):
-		self.stations = []
-		if (filename):
-			self.source = os.path.join(dirpath, filename)
-			(self.name, extension) = os.path.splitext(filename)
-		else:
-			self.source = dirpath
-			(path, extension) = os.path.splitext(self.source)
-			self.name = os.path.split(path)[1]
+class Invalid:
+	pass
 
-	@staticmethod
-	def is_valid(source):
-		(name, extension) = os.path.splitext(source)
-		if extension == '.pmz':
-			return zipfile.is_zipfile(source)
-		else:
-			return False
+class City:
+	def __init__(self, source):
+		(path, ext) = os.path.splitext(source)
+		if ext != '.pmz' or not zipfile.is_zipfile(source):
+			raise Invalid()
+		self.stations = []
+		self.source = source
+		self.name = os.path.split(path)[1]
 
 	def unzip(self, tmp):
 		zf = zipfile.ZipFile(self.source, 'r')

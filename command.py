@@ -35,7 +35,7 @@ class Command:
 		self.adapter = adapter
 
 	def execute(self):
-		pass
+		raise NotImplementedError()
 
 class SizeCommand(Command):
 	def execute(self):
