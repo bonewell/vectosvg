@@ -3,85 +3,57 @@ import os
 import argparse
 import tempfile
 import shutil
-import zipfile
 
+from city import City, Invalid
 from converter import Converter
 from vecinterpreter import VecInterpreter
 from svgadapter import SvgAdapter
 
-"""This script converts vec files of pMetro to SVG"""
+"""Converts vec files of pMetro to SVG"""
+class Vectosvg:
+	def __init__(self, source):
+		self.source = source
 
-def cities():
-	names = []
-	for dirpath, dirnames, filenames in os.walk(source):
-		for fname in filenames:
-			(name, ext) = os.path.splitext(fname)
-			if ext == '.pmz':
-				names.append(name)
-	return names
+	def cities(self):
+		files = [ self.source ]
+		if os.path.isdir(self.source):
+			files = [ os.path.join(self.source, f) for f in os.listdir(self.source) ]
+		cities = []
+		for f in files:
+			try:
+				cities.append(City(f))
+			except Invalid:
+				print 'File "%s" is not pMetro format' % f
+		return cities
 
-def main():
-	if os.path.isdir(source):
-		for name in cities():
-			archive = '%s/%s.pmz' % (source, name)
-			run(archive, name)
-	else:
-		(path, ext) = os.path.splitext(source)
-		if ext == '.pmz':
-			name = os.path.split(path)[1]
-			run(source, name)
-		else:
-			print 'File "%s" is not pMetro format' % source
+	def save(self, dest):
+		self.dest = dest
+		self.tmp = tempfile.mkdtemp()
+		for city in self.cities():
+			self.process(city)
+		shutil.rmtree(self.tmp)
 
-def run(archive, name):
-		iszip = zipfile.is_zipfile(archive)
+	def process(self, city):
+		print 'City: %s' % city.name
+		city.unzip(self.tmp)
+		path = os.path.join(self.dest, city.name)
+		shutil.rmtree(path, True)
+		os.mkdir(path)
+		for station in city.stations:
+			print 'Station: %s' % station
+			inp = os.path.join(self.tmp, '%s/%s.vec' % (city.name, station))
+			out = os.path.join(self.dest, '%s/%s.svg' % (city.name, station))
+			self.convert(inp, out)
 
-		if iszip:
-			zf = zipfile.ZipFile(archive, 'r')
-			files = [ f for f in zf.namelist() if isvec(f) ]
-			city = '%s/%s' % (tmp, name)
-			os.mkdir(city)
-			zf.extractall(city, files)
-			process(name, files)
-		else:
-			print 'File \'%s\' is not corect' % archive
+	def convert(self, inp, out):
+		vec = VecInterpreter(inp)
+		svg = SvgAdapter(out)
+		Converter().convert(vec, svg)
 
-def process(city, files):
-	path = '%s/%s' % (dest, city)
-	shutil.rmtree(path, True)
-	os.mkdir(path)
+if __name__ == "__main__":
+	parser = argparse.ArgumentParser(prog='vectosvg', description='Converter subway stations schemes from pMetro format into SVG images')
+	parser.add_argument('source', help='Input directory which contains *.pmz files or path to specific *.pmz file')
+	parser.add_argument('dest', help='Output directory where will be saved SVG images')
+	values = parser.parse_args()
 
-	print 'City: %s' % city
-	for fname in files:
-		inp = '%s/%s/%s' % (tmp, city, fname)
-		out = '%s/%s/%s' % (dest, city, name(fname))
-		print 'Schema: %s' % fname.split('.')[0]
-		convert(inp, out)
-	print
-
-def isvec(f):
-	(name, ext) = f.split('.')
-	return ext == 'vec'
-
-def name(f):
-	(name, ext) = f.split('.')
-	return '%s.svg' % name
-
-def convert(inp, out):
-	con = Converter()
-	vec = VecInterpreter(inp)
-	svg = SvgAdapter(out)
-	con.convert(vec, svg)
-
-parser = argparse.ArgumentParser(prog='vectosvg', description='Converter subway stations schemes from pMetro format into SVG images')
-parser.add_argument('source', help='Input directory which contains *.pmz files or path to specific *.pmz file')
-parser.add_argument('dest', help='Output directory where will be saved SVG images')
-values = parser.parse_args()
-
-source = values.source
-dest = values.dest
-tmp = tempfile.mkdtemp()
-
-main()
-
-shutil.rmtree(tmp)
+	Vectosvg(values.source).save(values.dest)
