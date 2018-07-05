@@ -1,0 +1,57 @@
+@startuml
+
+class City {
+    + is_valid(source : string) : bool
+    + unzip(tmp : string)
+    + is_vec(filename : string) : bool
+}
+
+interface AdapterInterface {
+    + {abstract} line()
+    + {abstract} polygon()
+    + {abstract} ellipse()
+}
+
+class Converter {
+    + convert(input : InterpreterInterface, output : AdapterInterface)
+}
+AdapterInterface <.. Converter
+
+interface InterpreterInterface {
+    + {abstract} interpret() : IteratorInterface
+}
+Converter ..>InterpreterInterface
+
+class VecInterpreter {
+    + __init__(filename : string)
+    + line() : string
+    + command(name : string, params : string[]) : CommandInterface
+    + __del__()
+}
+InterpreterInterface <|-- VecInterpreter
+VecInterpreter --* VecIterator
+
+interface IteratorInterface {
+    + {abstract} next() : CommandInterface
+}
+Converter ..> IteratorInterface
+InterpreterInterface ..> IteratorInterface
+
+IteratorInterface <|.. VecIterator
+
+interface CommandInterface {
+    + {abstract} execute()
+    + __init__(params : string[])
+    + setAdapter(adapter : AdapterInterface)
+}
+AdapterInterface <.. CommandInterface
+CommandInterface <|.. LineCommand
+CommandInterface <|.. StairsCommand
+
+class SvgAdapter {
+    + __init__(filename : string)
+    + __del__()
+}
+AdapterInterface <|.. SvgAdapter
+
+@enduml
