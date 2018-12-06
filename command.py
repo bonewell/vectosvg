@@ -51,16 +51,12 @@ class PenColorCommand(Command):
 	def execute(self):
 		if self.params:
 			color = self.params[0]
-			if not color or int(color, base=16) == 0:
-				color = '000000'
 			self.adapter.pencolor(color)
 
 class BrushColorCommand(Command):
 	def execute(self):
 		if self.params:
 			color = self.params[0]
-			if not color or int(color, base=16) == 0:
-				color = '000000'
 			self.adapter.brushcolor(color)
 
 class OpaqueCommand(Command):

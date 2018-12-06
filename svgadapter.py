@@ -2,6 +2,7 @@
 
 import math
 import svgwrite
+import colorutils
 from adapter import AdapterInterface
 
 def diff((x1, y1), (x2, y2)):
@@ -30,14 +31,14 @@ class SvgAdapter(AdapterInterface):
 	def __init__(self, filename):
 		self.image = svgwrite.Drawing(filename, profile='full')
 		self.stroke = self.color('000000')
-		self.fill = self.color('-1')
+		self.fill = self.color('')
 		self.opacity = 1.0
 		self.defs()
 		self.root = self.image.add(self.image.g())
 		self.current = self.root
 
 	def __del__(self):
-		self.image.save()
+		self.image.save(pretty=True)
 
 	def defs(self):
 		self.marker = self.image.marker((0, 5), (4, 3), 'auto', markerUnits = "strokeWidth")
@@ -55,7 +56,10 @@ class SvgAdapter(AdapterInterface):
 		self.root.rotate(alfa, (self.cx, self.cy))
 
 	def color(self, color):
-		return 'none' if color == '-1' else '#%s' % color
+		try:
+			return colorutils.Color(hex=color).hex
+		except ValueError:
+			return 'none'
 
 	def pencolor(self, color):
 		self.stroke = self.color(color)
