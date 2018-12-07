@@ -18,7 +18,7 @@ def translate(x1, y1, x2, y2, t):
 		a = math.atan2(dx, dy)
 		tx = t * math.sin(a)
 		ty = t * math.cos(a)
-	return (tx, ty)
+	return tx, ty
 
 
 def iscrossed(x, t, g):
