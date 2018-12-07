@@ -132,7 +132,7 @@ class SvgAdapter(AdapterInterface):
 		w = int(x2) - int(x1)
 		h = int(y2) - int(y1)
 		rect = self.current.add(self.image.rect((x1, y1), (w, h)))
-		rect.fill('none').stroke('none', width=0)
+		rect.fill(self.fill).stroke('none', width=0)
 
 	def text(self, x, y, text, size, font, a):
 		insert = (x, float(y) + float(size))

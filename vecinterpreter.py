@@ -49,6 +49,10 @@ class VecInterpreter(InterpreterInterface):
 			return TextOutCommand(params)
 		elif name == 'Railway':
 			return RailwayCommand(params)
+		elif name == 'SpotRect':
+			return SpotRectCommand(params)
+		elif name == 'SpotCircle':
+			return SpotCircleCommand(params)
 		else:
 			print 'Unknown command: %s' % name
 			return None

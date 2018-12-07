@@ -73,6 +73,22 @@ class OpaqueCommand(Command):
 		self.adapter.pencolor('000000')
 
 
+class SpotRectCommand(Command):
+	def execute(self):
+		(x1, y1, w, h) = self.params[:4]
+		x2 = int(x1) + int(w)
+		y2 = int(y1) + int(h)
+		self.adapter.rect(x1, y1, x2, y2)
+
+
+class SpotCircleCommand(Command):
+	def execute(self):
+		(r, xc, yc) = self.params[:3]
+		x1, y1 = int(xc) - int(r), int(yc) - int(r)
+		x2, y2 = int(xc) + int(r), int(yc) + int(r)
+		self.adapter.ellipse(x1, y1, x2, y2)
+
+
 class LineCommand(Command):
 	def execute(self):
 		points = []
