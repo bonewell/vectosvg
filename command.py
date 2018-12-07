@@ -4,6 +4,7 @@ import math
 
 from adapter import AdapterInterface
 
+
 def translate(x1, y1, x2, y2, t):
 	dx = x2 - x1
 	dy = y2 - y1
@@ -21,11 +22,13 @@ def translate(x1, y1, x2, y2, t):
 		ty = t * math.cos(a)
 	return (tx, ty)
 
+
 def iscrossed(x, t, g):
 	if t > 0:
 		return x > g
 	else:
 		return x < g
+
 
 class Command:
 	def __init__(self, params):
@@ -37,15 +40,18 @@ class Command:
 	def execute(self):
 		raise NotImplementedError()
 
+
 class SizeCommand(Command):
 	def execute(self):
 		(w, h) = self.params[0].split('x')
 		self.adapter.size(w, h)
 
+
 class AngleCommand(Command):
 	def execute(self):
 		a = self.params[0]
 		self.adapter.rotate(a)
+
 
 class PenColorCommand(Command):
 	def execute(self):
@@ -53,16 +59,19 @@ class PenColorCommand(Command):
 			color = self.params[0]
 			self.adapter.pencolor(color)
 
+
 class BrushColorCommand(Command):
 	def execute(self):
 		if self.params:
 			color = self.params[0]
 			self.adapter.brushcolor(color)
 
+
 class OpaqueCommand(Command):
 	def execute(self):
 		self.adapter.opaque(self.params[0])
 		self.adapter.pencolor('000000')
+
 
 class LineCommand(Command):
 	def execute(self):
@@ -76,6 +85,7 @@ class LineCommand(Command):
 		w = 1 if (len(self.params) % 2) == 0 else self.params[-1]
 		self.adapter.polyline(points, w)
 
+
 class DashedCommand(Command):
 	def execute(self):
 		points = []
@@ -88,6 +98,7 @@ class DashedCommand(Command):
 		w = 1 if (len(self.params) % 2) == 0 else self.params[-1]
 		self.adapter.polyline(points, w, True)
 
+
 class PolygonCommand(Command):
 	def execute(self):
 		points = []
@@ -99,10 +110,12 @@ class PolygonCommand(Command):
 				points.append((x, y))
 		self.adapter.polygon(points)
 
+
 class EllipseCommand(Command):
 	def execute(self):
 		(x1, y1, x2, y2) = self.params[:4]
 		self.adapter.ellipse(x1, y1, x2, y2)
+
 
 class SplineCommand(Command):
 	def execute(self):
@@ -116,6 +129,7 @@ class SplineCommand(Command):
 		w = 1 if (len(self.params) % 2) == 0 else self.params[-1]
 		self.adapter.spline(points, w)
 
+
 class ArrowCommand(Command):
 	def execute(self):
 		points = []
@@ -126,6 +140,7 @@ class ArrowCommand(Command):
 				y = self.params[i]
 				points.append((x, y))
 		self.adapter.arrow(points)
+
 
 class StairsCommand(Command):
 	def execute(self):
@@ -143,6 +158,7 @@ class StairsCommand(Command):
 			xe += tx
 			ye += ty
 
+
 class AngleTextOutCommand(Command):
 	def execute(self):
 		a = self.params[0]
@@ -157,6 +173,7 @@ class AngleTextOutCommand(Command):
 		text = text.decode('windows-1251').encode('UTF-8')
 		self.adapter.text(x, y, text, size, font, float(a))
 
+
 class TextOutCommand(Command):
 	def execute(self):
 		font = self.params[0].strip()
@@ -166,6 +183,7 @@ class TextOutCommand(Command):
 		text = text.replace(r'\n', ' ')
 		text = text.decode('windows-1251').encode('UTF-8')
 		self.adapter.text(x, y, text, size, font, 0)
+
 
 class RailwayCommand(Command):
 	def execute(self):

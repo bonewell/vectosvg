@@ -9,8 +9,9 @@ from converter import Converter
 from vecinterpreter import VecInterpreter
 from svgadapter import SvgAdapter
 
-"""Converts vec files of pMetro to SVG"""
+
 class Vectosvg:
+	"""Converts vec files of pMetro to SVG"""
 	def __init__(self, source):
 		self.source = source
 
@@ -49,6 +50,7 @@ class Vectosvg:
 		vec = VecInterpreter(inp)
 		svg = SvgAdapter(out)
 		Converter().convert(vec, svg)
+
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(prog='vectosvg', description='Converter subway stations schemes from pMetro format into SVG images')

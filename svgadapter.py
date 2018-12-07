@@ -5,10 +5,12 @@ import svgwrite
 import colorutils
 from adapter import AdapterInterface
 
+
 def diff((x1, y1), (x2, y2)):
 	dx = int(x2) - int(x1)
 	dy = int(y2) - int(y1)
 	return math.sqrt((dx * dx) + (dy * dy))
+
 
 def translate((x1, y1), (x2, y2), t):
 	dx = int(x2) - int(x1)
@@ -26,6 +28,7 @@ def translate((x1, y1), (x2, y2), t):
 		tx = t * math.sin(a)
 		ty = t * math.cos(a)
 	return (tx, ty)
+
 
 class SvgAdapter(AdapterInterface):
 	def __init__(self, filename):
