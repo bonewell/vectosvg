@@ -2,8 +2,6 @@
 
 import math
 
-from adapter import AdapterInterface
-
 
 def translate(x1, y1, x2, y2, t):
 	dx = x2 - x1

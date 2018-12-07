@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-from interpreter import InterpreterInterface
-from adapter import AdapterInterface
-
 
 class Converter:
 	def convert(self, inp, out):
