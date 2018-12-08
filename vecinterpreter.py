@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from interpreter import InterpreterInterface
 from interpreter import IteratorInterface
@@ -7,7 +7,7 @@ from command import *
 
 class VecInterpreter(InterpreterInterface):
 	def __init__(self, filename):
-		self.f = open(filename, 'r')
+		self.f = open(filename, 'r', encoding="windows-1251")
 
 	def __del__(self):
 		self.f.close()
@@ -54,7 +54,7 @@ class VecInterpreter(InterpreterInterface):
 		elif name == 'SpotCircle':
 			return SpotCircleCommand(params)
 		else:
-			print 'Unknown command: %s' % name
+			print('Unknown command: %s' % name)
 			return None
 
 

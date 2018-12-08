@@ -1,9 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
 import os
 import zipfile
 
 
-class Invalid:
+class Invalid(BaseException):
 	pass
 
 

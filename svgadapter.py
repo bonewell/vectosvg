@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import math
 import svgwrite
@@ -6,13 +6,17 @@ import colorutils
 from adapter import AdapterInterface
 
 
-def diff((x1, y1), (x2, y2)):
+def diff(p1, p2):
+	x1, y1 = p1
+	x2, y2 = p2
 	dx = int(x2) - int(x1)
 	dy = int(y2) - int(y1)
 	return math.sqrt((dx * dx) + (dy * dy))
 
 
-def translate((x1, y1), (x2, y2), t):
+def translate(p1, p2, t):
+	x1, y1 = p1
+	x2, y2 = p2
 	dx = int(x2) - int(x1)
 	dy = int(y2) - int(y1)
 	if dx == 0:
@@ -39,6 +43,7 @@ class SvgAdapter(AdapterInterface):
 		self.alpha = 0.0
 		self.defs()
 		self.root = self.image.add(self.image.g())
+		# self.root.scale(0.5) # for website
 		self.current = self.root
 
 	def __del__(self):

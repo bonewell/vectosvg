@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
 import os
 import argparse
 import tempfile
@@ -24,7 +25,7 @@ class Vectosvg:
 			try:
 				cities.append(City(f))
 			except Invalid:
-				print 'File "%s" is not pMetro format' % f
+				print('File "%s" is not pMetro format' % f)
 		return cities
 
 	def save(self, dest):
@@ -35,13 +36,13 @@ class Vectosvg:
 		shutil.rmtree(self.tmp)
 
 	def process(self, city):
-		print 'City: %s' % city.name
+		print('City: %s' % city.name)
 		city.unzip(self.tmp)
 		path = os.path.join(self.dest, city.name)
 		shutil.rmtree(path, True)
 		os.mkdir(path)
 		for station in city.stations:
-			print 'Station: %s' % station
+			print('Station: %s' % station)
 			inp = os.path.join(self.tmp, '%s/%s.vec' % (city.name, station))
 			out = os.path.join(self.dest, '%s/%s.svg' % (city.name, station))
 			self.convert(inp, out)

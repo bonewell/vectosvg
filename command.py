@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import math
 
@@ -184,7 +184,6 @@ class AngleTextOutCommand(Command):
 		else:
 			text = ''
 		text = text.replace(r'\n', ' ')
-		text = text.decode('windows-1251').encode('UTF-8')
 		self.adapter.text(x, y, text, size, font, float(a))
 
 
@@ -195,7 +194,6 @@ class TextOutCommand(Command):
 		(x, y) = self.params[2:4]
 		text = self.params[4].strip()
 		text = text.replace(r'\n', ' ')
-		text = text.decode('windows-1251').encode('UTF-8')
 		self.adapter.text(x, y, text, size, font, 0)
 
 
