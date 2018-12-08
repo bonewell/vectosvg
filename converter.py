@@ -6,6 +6,6 @@ class Converter:
 		it = inp.interpret()
 		cmd = it.next()
 		while cmd:
-			cmd.setAdapter(out)
+			cmd.set_adapter(out)
 			cmd.execute()
 			cmd = it.next()

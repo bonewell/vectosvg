@@ -40,7 +40,7 @@ class Vectosvg:
 		city.unzip(self.tmp)
 		path = os.path.join(self.dest, city.name)
 		shutil.rmtree(path, True)
-		os.mkdir(path)
+		os.makedirs(path)
 		for station in city.stations:
 			print('Station: %s' % station)
 			inp = os.path.join(self.tmp, '%s/%s.vec' % (city.name, station))
