@@ -1,0 +1,27 @@
+@startuml
+-> Vectosvg : create(source)
+-> Vectosvg : save(dest)
+activate Vectosvg
+loop cities
+    loop stations
+        Vectosvg -> "vec : VecInterpreter" : create(input path)
+        Vectosvg -> "svg : SvgAdapter" : create(output path)
+        Vectosvg -> Converter : convert(vec, svg)
+        Converter -> "vec : VecInterpreter" : interpret
+        "vec : VecInterpreter" --> Converter : commands
+        loop commands
+            Converter -> Command : setAdapter(svg)
+            Converter -> Command : execute()
+            activate Command
+            Command -> "svg : SvgAdapter"
+            note over Converter : draw shapes
+            "svg : SvgAdapter" --> Command
+            deactivate Command
+            destroy Command
+        end
+    end
+end
+Vectosvg <-- Converter
+<-- Vectosvg
+deactivate Vectosvg
+@enduml

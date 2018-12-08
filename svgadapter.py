@@ -2,12 +2,15 @@
 
 import math
 import svgwrite
+import colorutils
 from adapter import AdapterInterface
+
 
 def diff((x1, y1), (x2, y2)):
 	dx = int(x2) - int(x1)
 	dy = int(y2) - int(y1)
 	return math.sqrt((dx * dx) + (dy * dy))
+
 
 def translate((x1, y1), (x2, y2), t):
 	dx = int(x2) - int(x1)
@@ -24,20 +27,22 @@ def translate((x1, y1), (x2, y2), t):
 		a = math.atan2(dx, dy)
 		tx = t * math.sin(a)
 		ty = t * math.cos(a)
-	return (tx, ty)
+	return tx, ty
+
 
 class SvgAdapter(AdapterInterface):
 	def __init__(self, filename):
 		self.image = svgwrite.Drawing(filename, profile='full')
 		self.stroke = self.color('000000')
-		self.fill = self.color('-1')
+		self.fill = self.color('')
 		self.opacity = 1.0
+		self.alpha = 0.0
 		self.defs()
 		self.root = self.image.add(self.image.g())
 		self.current = self.root
 
 	def __del__(self):
-		self.image.save()
+		self.image.save(pretty=True)
 
 	def defs(self):
 		self.marker = self.image.marker((0, 5), (4, 3), 'auto', markerUnits = "strokeWidth")
@@ -51,11 +56,16 @@ class SvgAdapter(AdapterInterface):
 		self.rect(0, 0, w, h)
 
 	def rotate(self, a):
-		alfa = float(a) * -1
-		self.root.rotate(alfa, (self.cx, self.cy))
+		self.alpha += float(a) * -1
+		self.current = self.root.add(self.image.g())
+		if self.alpha != 0:
+			self.current.rotate(self.alpha, (self.cx, self.cy))
 
 	def color(self, color):
-		return 'none' if color == '-1' else '#%s' % color
+		try:
+			return colorutils.Color(hex=color).hex
+		except ValueError:
+			return 'none'
 
 	def pencolor(self, color):
 		self.stroke = self.color(color)
@@ -67,6 +77,7 @@ class SvgAdapter(AdapterInterface):
 		self.opacity = float(v) / 100
 		self.current = self.root.add(self.image.g())
 		self.current.fill(self.fill, opacity=self.opacity).stroke(self.stroke, opacity=self.opacity)
+		self.current.rotate(self.alpha, (self.cx, self.cy))
 
 	def line(self, x1, y1, x2, y2):
 		line = self.current.add(self.image.line((x1, y1), (x2, y2)))
@@ -125,7 +136,7 @@ class SvgAdapter(AdapterInterface):
 		w = int(x2) - int(x1)
 		h = int(y2) - int(y1)
 		rect = self.current.add(self.image.rect((x1, y1), (w, h)))
-		rect.fill('none').stroke('none', width=0)
+		rect.fill(self.fill).stroke('none', width=0)
 
 	def text(self, x, y, text, size, font, a):
 		insert = (x, float(y) + float(size))

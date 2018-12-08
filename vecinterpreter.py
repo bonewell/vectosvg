@@ -4,6 +4,7 @@ from interpreter import InterpreterInterface
 from interpreter import IteratorInterface
 from command import *
 
+
 class VecInterpreter(InterpreterInterface):
 	def __init__(self, filename):
 		self.f = open(filename, 'r')
@@ -48,9 +49,14 @@ class VecInterpreter(InterpreterInterface):
 			return TextOutCommand(params)
 		elif name == 'Railway':
 			return RailwayCommand(params)
+		elif name == 'SpotRect':
+			return SpotRectCommand(params)
+		elif name == 'SpotCircle':
+			return SpotCircleCommand(params)
 		else:
 			print 'Unknown command: %s' % name
 			return None
+
 
 class VecIterator(IteratorInterface):
 	def __init__(self, container):
@@ -59,9 +65,9 @@ class VecIterator(IteratorInterface):
 	def next(self):
 		line = self.container.line()
 		if not line:
-			return None # end file
+			return None  # end file
 
-#		print line
+		# print line
 
 		tokens = line.strip().strip(',').split(' ')
 		if not tokens:
@@ -79,9 +85,6 @@ class VecIterator(IteratorInterface):
 		params = []
 		for p in raw_params:
 			params.append(p.strip())
-#		print 'Name: %s - %s' % (name, params)
+		# print 'Name: %s - %s' % (name, params)
 		cmd = self.container.command(name, params)
-		if cmd == None:
-			return self.next()
-		else:
-			return cmd
+		return cmd if cmd else self.next()

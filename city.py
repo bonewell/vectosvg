@@ -2,8 +2,10 @@
 import os
 import zipfile
 
+
 class Invalid:
 	pass
+
 
 class City:
 	def __init__(self, source):

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 class AdapterInterface:
 	def size(self, w, h):
 		raise NotImplementedError()
