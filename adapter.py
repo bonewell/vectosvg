@@ -1,42 +1,56 @@
 #!/usr/bin/env python3
+from abc import ABC, abstractmethod
 
 
-class AdapterInterface:
+class AdapterInterface(ABC):
+    @abstractmethod
     def size(self, w, h):
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def rotate(self, a):
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def pencolor(self, color):
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def brushcolor(self, color):
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def opaque(self, v):
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def line(self, x1, y1, x2, y2):
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def polyline(self, points, w, dashed=False):
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def polygon(self, points):
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def ellipse(self, x1, y1, x2, y2):
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def spline(self, points, w):
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def arrow(self, points):
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def rect(self, x1, y1, x2, y2):
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def text(self, x, y, text, size, font, a):
-        raise NotImplementedError()
+        pass

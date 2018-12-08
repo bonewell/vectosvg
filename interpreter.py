@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
+from abc import ABC, abstractmethod
 
 
-class InterpreterInterface:
+class InterpreterInterface(ABC):
+    @abstractmethod
     def interpret(self):
-        raise NotImplementedError()
+        pass
 
 
-class IteratorInterface:
+class IteratorInterface(ABC):
+    @abstractmethod
     def next(self):
-        raise NotImplementedError()
+        pass
