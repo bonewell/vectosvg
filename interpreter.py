@@ -2,10 +2,10 @@
 
 
 class InterpreterInterface:
-	def interpret(self):
-		raise NotImplementedError()
+    def interpret(self):
+        raise NotImplementedError()
 
 
 class IteratorInterface:
-	def next(self):
-		raise NotImplementedError()
+    def next(self):
+        raise NotImplementedError()
