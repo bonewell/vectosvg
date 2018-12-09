@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from interpreter import InterpreterInterface
-from interpreter import IteratorInterface
 from command import *
 
 
@@ -12,13 +11,8 @@ class VecInterpreter(InterpreterInterface):
     def __del__(self):
         self.f.close()
 
-    def interpret(self):
-        return VecIterator(self)
-
-    def line(self):
-        return self.f.readline()
-
-    def command(self, name, params):
+    @staticmethod
+    def command(name, params):
         if name == 'Size' or name == 'size':
             return SizeCommand(params)
         elif name == 'Angle':
@@ -57,15 +51,10 @@ class VecInterpreter(InterpreterInterface):
             print('Unknown command: %s' % name)
             return None
 
-
-class VecIterator(IteratorInterface):
-    def __init__(self, container):
-        self.container = container
-
     def next(self):
-        line = self.container.line()
+        line = self.f.readline()
         if not line:
-            return None  # end file
+            return None
 
         # print line
 
@@ -86,5 +75,5 @@ class VecIterator(IteratorInterface):
         for p in raw_params:
             params.append(p.strip())
         # print 'Name: %s - %s' % (name, params)
-        cmd = self.container.command(name, params)
+        cmd = VecInterpreter.command(name, params)
         return cmd if cmd else self.next()

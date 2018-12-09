@@ -16,6 +16,7 @@ class Vectosvg:
 
     def __init__(self, source):
         self.source = source
+        self.dest = 'out'
 
     def cities(self):
         files = [self.source]
@@ -51,7 +52,7 @@ class Vectosvg:
     def convert(self, inp, out):
         vec = VecInterpreter(inp)
         svg = SvgAdapter(out)
-        Converter().convert(vec, svg)
+        Converter.convert(vec, svg)
 
 
 if __name__ == "__main__":

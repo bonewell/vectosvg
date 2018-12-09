@@ -2,10 +2,8 @@
 
 
 class Converter:
-    def convert(self, inp, out):
-        it = inp.interpret()
-        cmd = it.next()
-        while cmd:
+    @staticmethod
+    def convert(inp, out):
+        for cmd in inp:
             cmd.set_adapter(out)
             cmd.execute()
-            cmd = it.next()
