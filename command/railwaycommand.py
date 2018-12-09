@@ -1,6 +1,7 @@
 import math
 from .command import Command
 from .mathhelper import translate, is_crossed
+from adapter import Point
 
 
 class RailwayCommand(Command):
@@ -34,13 +35,13 @@ class RailwayCommand(Command):
         yb1 = int(y1)
         xe1 = int(x2)
         ye1 = int(y2)
-        self.adapter.line(xb1, yb1, xe1, ye1)
+        self.adapter.line(Point(xb1, yb1), Point(xe1, ye1))
 
         xb2 = int(x1) - rx
         yb2 = int(y1) + ry
         xe2 = int(x2) - rx
         ye2 = int(y2) + ry
-        self.adapter.line(xb2, yb2, xe2, ye2)
+        self.adapter.line(Point(xb2, yb2), Point(xe2, ye2))
 
         (sy, sx) = translate(xb1, yb1, xe1, ye1, math.fabs(int(w2) - int(w1)) / 2)
         sx1 = int(xb1) + sx
@@ -58,7 +59,7 @@ class RailwayCommand(Command):
         xe = sx2 + txp
         ye = sy2 + typ
         while not is_crossed(xb, tx, sx3) and not is_crossed(yb, ty, sy3):
-            self.adapter.line(xb, yb, xe, ye)
+            self.adapter.line(Point(xb, yb), Point(xe, ye))
             xb += tx
             yb += ty
             xe += tx

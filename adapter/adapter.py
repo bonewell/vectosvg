@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
 from abc import ABC, abstractmethod
 
 
-class AdapterInterface(ABC):
+class Adapter(ABC):
     @abstractmethod
     def size(self, w, h):
         pass
@@ -24,7 +23,7 @@ class AdapterInterface(ABC):
         pass
 
     @abstractmethod
-    def line(self, x1, y1, x2, y2):
+    def line(self, p1, p2):
         pass
 
     @abstractmethod
@@ -36,7 +35,7 @@ class AdapterInterface(ABC):
         pass
 
     @abstractmethod
-    def ellipse(self, x1, y1, x2, y2):
+    def ellipse(self, p1, p2):
         pass
 
     @abstractmethod
@@ -48,9 +47,9 @@ class AdapterInterface(ABC):
         pass
 
     @abstractmethod
-    def rect(self, x1, y1, x2, y2):
+    def rect(self, p1, p2):
         pass
 
     @abstractmethod
-    def text(self, x, y, text, size, font, a):
+    def text(self, p, text, size, font, a):
         pass

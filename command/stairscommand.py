@@ -1,5 +1,6 @@
 from .command import Command
 from .mathhelper import translate, is_crossed
+from adapter import Point
 
 
 class StairsCommand(Command):
@@ -12,7 +13,7 @@ class StairsCommand(Command):
         xe = int(x2)
         ye = int(y2)
         while not is_crossed(xb, tx, int(x3)) and not is_crossed(yb, ty, int(y3)):
-            self.adapter.line(xb, yb, xe, ye)
+            self.adapter.line(Point(xb, yb), Point(xe, ye))
             xb += tx
             yb += ty
             xe += tx

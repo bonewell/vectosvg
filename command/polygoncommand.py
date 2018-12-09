@@ -1,4 +1,5 @@
 from .command import Command
+from adapter import Point
 
 
 class PolygonCommand(Command):
@@ -9,5 +10,5 @@ class PolygonCommand(Command):
                 x = self.params[i]
             else:
                 y = self.params[i]
-                points.append((x, y))
+                points.append(Point(x, y))
         self.adapter.polygon(points)

@@ -18,7 +18,7 @@ class Iterator(object):
             raise StopIteration()
 
 
-class InterpreterInterface(ABC):
+class Interpreter(ABC):
     @abstractmethod
     def next(self) -> Command or None:
         pass

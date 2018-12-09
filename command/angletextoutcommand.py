@@ -1,4 +1,5 @@
 from .command import Command
+from adapter import Point
 
 
 class AngleTextOutCommand(Command):
@@ -12,4 +13,4 @@ class AngleTextOutCommand(Command):
         else:
             text = ''
         text = text.replace(r'\n', ' ')
-        self.adapter.text(x, y, text, size, font, float(a))
+        self.adapter.text(Point(x, y), text, size, font, float(a))

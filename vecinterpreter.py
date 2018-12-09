@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from interpreter import InterpreterInterface
+from interpreter import Interpreter
 from command import *
 
 
-class VecInterpreter(InterpreterInterface):
+class VecInterpreter(Interpreter):
     def __init__(self, filename):
         self.f = open(filename, 'r', encoding="windows-1251")
 

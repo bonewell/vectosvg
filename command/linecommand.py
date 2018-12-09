@@ -1,4 +1,5 @@
 from .command import Command
+from adapter import Point
 
 
 class LineCommand(Command):
@@ -9,6 +10,6 @@ class LineCommand(Command):
                 x = self.params[i]
             else:
                 y = self.params[i]
-                points.append((x, y))
+                points.append(Point(x, y))
         w = 1 if (len(self.params) % 2) == 0 else self.params[-1]
         self.adapter.polyline(points, w)
