@@ -1,10 +1,8 @@
 from .command import Command
-from adapter import Point
+from adapter import Point, Rectangle
 
 
 class SpotRectCommand(Command):
     def execute(self):
-        (x1, y1, w, h) = self.params[:4]
-        x2 = int(x1) + int(w)
-        y2 = int(y1) + int(h)
-        self.adapter.rect(Point(x1, y1), Point(x2, y2))
+        (x, y, w, h) = self.params[:4]
+        self.adapter.rect(Point(x, y), Rectangle(w, h))

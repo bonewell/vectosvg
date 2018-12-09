@@ -5,21 +5,18 @@ import svgwrite
 import colorutils
 from adapter import Adapter
 from adapter import Point
+from adapter import Rectangle
 
 
 def diff(p1, p2):
-    x1, y1 = p1.coordinate()
-    x2, y2 = p2.coordinate()
-    dx = x2 - x1
-    dy = y2 - y1
+    dx = p2.x - p1.x
+    dy = p2.y - p1.y
     return math.sqrt((dx * dx) + (dy * dy))
 
 
 def translate(p1, p2, t):
-    x1, y1 = p1.coordinate()
-    x2, y2 = p2.coordinate()
-    dx = x2 - x1
-    dy = y2 - y1
+    dx = p2.x - p1.x
+    dy = p2.y - p1.y
     if dx == 0:
         z = -1 if dy < 0 else 1
         tx = 0
@@ -59,7 +56,7 @@ class SvgAdapter(Adapter):
     def size(self, w, h):
         self.cx = int(w) / 2
         self.cy = int(h) / 2
-        self.rect(Point(0, 0), Point(w, h))
+        self.rect(Point(0, 0), Rectangle(w, h))
 
     def rotate(self, a):
         self.alpha += float(a) * -1
@@ -102,14 +99,9 @@ class SvgAdapter(Adapter):
         polygon = self.current.add(self.image.polygon(ps))
         polygon.fill(self.fill).stroke(self.stroke, width=1)
 
-    def ellipse(self, p1, p2):
-        x1, y1 = p1.coordinate()
-        x2, y2 = p2.coordinate()
-        rx = (x2 - x1) / 2
-        ry = (y2 - y1) / 2
-        cx = x1 + rx
-        cy = y1 + ry
-        ellipse = self.current.add(self.image.ellipse((cx, cy), (math.fabs(rx), math.fabs(ry))))
+    def ellipse(self, center, ellipse):
+        ellipse = self.current.add(self.image.ellipse(center.coordinate(),
+                                                      ellipse.size()))
         ellipse.fill(self.fill).stroke(self.stroke, width=1)
 
     def spline(self, points, w):
@@ -144,20 +136,16 @@ class SvgAdapter(Adapter):
         polyline.fill('none').stroke(self.stroke, width=1)
         polyline['marker-end'] = self.marker.get_funciri()
 
-    def rect(self, p1, p2):
-        x1, y1 = p1.coordinate()
-        x2, y2 = p2.coordinate()
-        w = x2 - x1
-        h = y2 - y1
-        rect = self.current.add(self.image.rect(p1.coordinate(), (w, h)))
+    def rect(self, point, rectangle):
+        rect = self.current.add(self.image.rect(point.coordinate(),
+                                                rectangle.size()))
         rect.fill(self.fill).stroke('none', width=0)
 
-    def text(self, p, text, size, font, a):
-        x, y = p.coordinate()
-        insert = (x, y + float(size))
-        txt = self.current.add(self.image.text(text, insert))
+    def text(self, point, text, angle):
+        insert = (point.x, point.y + text.font.size)
+        txt = self.current.add(self.image.text(text.string, insert))
         txt.fill(self.stroke).stroke('none', width=0)
-        txt['font-family'] = font
-        txt['font-size'] = size
-        if a:
-            txt.rotate(a * -1, (x, y))
+        txt['font-family'] = text.font.name
+        txt['font-size'] = text.font.size
+        if angle:
+            txt.rotate(angle * -1, (point.x, point.y))

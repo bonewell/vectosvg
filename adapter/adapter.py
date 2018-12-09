@@ -35,7 +35,7 @@ class Adapter(ABC):
         pass
 
     @abstractmethod
-    def ellipse(self, p1, p2):
+    def ellipse(self, center, ellipse):
         pass
 
     @abstractmethod
@@ -47,9 +47,9 @@ class Adapter(ABC):
         pass
 
     @abstractmethod
-    def rect(self, p1, p2):
+    def rect(self, point, rectangle):
         pass
 
     @abstractmethod
-    def text(self, p, text, size, font, a):
+    def text(self, point, text, angle):
         pass
