@@ -74,6 +74,6 @@ class VecInterpreter(Interpreter):
         params = []
         for p in raw_params:
             params.append(p.strip())
-        # print 'Name: %s - %s' % (name, params)
+        # print('Name: {} - {}'.format(name, params))
         cmd = VecInterpreter.command(name, params)
         return cmd if cmd else self.next()

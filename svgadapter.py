@@ -39,10 +39,11 @@ class SvgAdapter(Adapter):
         self.fill = self.color('')
         self.opacity = 1.0
         self.alpha = 0.0
+        self.marker = None
         self.defs()
         self.root = self.image.add(self.image.g())
-        # self.root.scale(0.5) # for website
         self.current = self.root
+        self.center = Point(0, 0)
 
     def __del__(self):
         self.image.save(pretty=True)
@@ -54,15 +55,17 @@ class SvgAdapter(Adapter):
         self.image.defs.add(self.marker)
 
     def size(self, w, h):
-        self.cx = int(w) / 2
-        self.cy = int(h) / 2
-        self.rect(Point(0, 0), Rectangle(w, h))
+        rectangle = Rectangle(w, h)
+        self.image.attribs['width'] = rectangle.w
+        self.image.attribs['height'] = rectangle.h
+        self.center = rectangle.center()
+        self.rect(Point(0, 0), rectangle)
 
     def rotate(self, a):
         self.alpha += float(a) * -1
         self.current = self.root.add(self.image.g())
         if self.alpha != 0:
-            self.current.rotate(self.alpha, (self.cx, self.cy))
+            self.current.rotate(self.alpha, self.center.coordinate())
 
     def color(self, color):
         try:
@@ -80,7 +83,7 @@ class SvgAdapter(Adapter):
         self.opacity = float(v) / 100
         self.current = self.root.add(self.image.g())
         self.current.fill(self.fill, opacity=self.opacity).stroke(self.stroke, opacity=self.opacity)
-        self.current.rotate(self.alpha, (self.cx, self.cy))
+        self.current.rotate(self.alpha, self.center.coordinate())
 
     def line(self, p1, p2):
         line = self.current.add(self.image.line(p1.coordinate(),
