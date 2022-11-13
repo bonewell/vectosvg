@@ -1,11 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 
 class Converter:
-	def convert(self, inp, out):
-		it = inp.interpret()
-		cmd = it.next()
-		while cmd:
-			cmd.setAdapter(out)
-			cmd.execute()
-			cmd = it.next()
+    @staticmethod
+    def convert(inp, out):
+        for cmd in inp:
+            cmd.set_adapter(out)
+            cmd.execute()
